@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Polyedre</title>
+    <link>https://polyedre.github.io/</link>
+    <description>Recent content on Polyedre</description>
+    <image>
+      <url>https://polyedre.github.io/</url>
+      <link>https://polyedre.github.io/</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 12 Feb 2022 12:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Microk8s, multi-usage Kubernetes</title>
+      <link>https://polyedre.github.io/posts/microk8s/</link>
+      <pubDate>Sat, 12 Feb 2022 12:41:17 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/microk8s/</guid>
+      <description>Microk8s is a framework designed to start a Kubernetes cluster. According to Canonical, which maintain the project, it is production ready, requires low maintenance and the Kubernetes cluster uses minimal resources.
+Microk8s is cross-platform and is available on Windows, Linux and macOS. One feature that is really cool is that it comes with a plugin system to enable some features in the cluster lovely easy.
+It also supports ARM if you want to run a Kubernetes cluster on Raspberry Pies.</description>
+    </item>
+    
+  </channel>
+</rss>
