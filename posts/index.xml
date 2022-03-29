@@ -9,7 +9,17 @@
       <link>https://polyedre.github.io/</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 12 Feb 2022 12:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 29 Mar 2022 00:00:00 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>À la recherche du workflow GPG parfait (Partie 1)</title>
+      <link>https://polyedre.github.io/posts/openpgp_1/</link>
+      <pubDate>Tue, 29 Mar 2022 00:00:00 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/openpgp_1/</guid>
+      <description>Les outils pour créer des clés GPG existent depuis une vingtaine d&amp;rsquo;années maintenant, et pourtant la gestion des clés est toujours aussi rugueuse. Dans cet article je vais essayer de résumer tout ce que j&amp;rsquo;ai compris et mis en place pour respecter les Best Practices.
+Pour résumer, après avoir configurer GPG, je vais créer une clé primaire, 3 sous-clés spécifiques à chaque usage puis la clé primaire sera sauvegardée sur un support offline et retirée du trousseau.</description>
+    </item>
+    
     <item>
       <title>Microk8s, multi-usage Kubernetes</title>
       <link>https://polyedre.github.io/posts/microk8s/</link>
