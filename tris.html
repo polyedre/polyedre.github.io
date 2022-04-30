@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
 <head>
-<!-- 2018-06-09 sam. 20:03 -->
+<!-- 2018-06-09 sam. 21:05 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Remember</title>
+<title>Algorithmes de tri</title>
 <meta name="generator" content="Org mode" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
@@ -228,16 +228,148 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
 <div id="content">
-<h1 class="title">Remember
-<br />
-<span class="subtitle">Something</span>
-</h1>
+<h1 class="title">Algorithmes de tri</h1>
+
+<div id="outline-container-org959262f" class="outline-2">
+<h2 id="org959262f">Tri par insertion</h2>
+<div class="outline-text-2" id="text-org959262f">
+</div>
+<div id="outline-container-orgae5ccae" class="outline-3">
+<h3 id="orgae5ccae">Principe</h3>
+<div class="outline-text-3" id="text-orgae5ccae">
 <p>
-It's sometimes usefull to remember something.
+Le <b>tri par insertion</b> fonctionne de la manière suivante : on enlève un par un les éléments de la liste à trier et on les place dans une autre liste de telle sorte à ce que cette autre liste soit triée.
+En pratique il n'est pas nécessaire de créer deux listes distinctes, car la somme des nombres d'élements des deux liste précédentes (celle à trier et celle déjà triée) est toujours égale au nombre d'éléments de la liste initiale.
+Pour chaque élément d'indice <code>i</code>, on va donc le placer au début de la liste et l'échanger avec son successeur tant qu'il est plus petit ou plus grand selon le tri que l'on veut effectuer.
 </p>
+</div>
+</div>
+<div id="outline-container-orgc857db9" class="outline-3">
+<h3 id="orgc857db9">Implémentation en python</h3>
+<div class="outline-text-3" id="text-orgc857db9">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #8ac6f2; font-weight: bold;">def</span> <span style="color: #cae682;">tri_insertion</span>(L):
+<span style="background-color: #303030;"> </span>   <span style="color: #8ac6f2; font-weight: bold;">for</span> i <span style="color: #8ac6f2; font-weight: bold;">in</span> <span style="color: #e5786d;">range</span>(1,<span style="color: #e5786d;">len</span>(L)):
+        <span style="color: #cae682;">temp</span> = L[i]
+        <span style="color: #cae682;">j</span> = i
+        <span style="color: #8ac6f2; font-weight: bold;">while</span> j &gt; 0 <span style="color: #8ac6f2; font-weight: bold;">and</span> L[j-1] &gt; temp:
+            <span style="color: #cae682;">L</span>[j] = L[j-1]
+            <span style="color: #cae682;">j</span> -= 1
+        <span style="color: #cae682;">L</span>[j] = temp
+<span style="background-color: #303030;"> </span>   <span style="color: #8ac6f2; font-weight: bold;">return</span> L
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org642dc43" class="outline-3">
+<h3 id="org642dc43">Complexité</h3>
+<div class="outline-text-3" id="text-org642dc43">
+<p>
+La conplexité générale de cette fonction est en \(O(n²)\).
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org09a2508" class="outline-2">
+<h2 id="org09a2508">Tri à bulle</h2>
+<div class="outline-text-2" id="text-org09a2508">
+</div>
+<div id="outline-container-org70c25b0" class="outline-3">
+<h3 id="org70c25b0">Principe</h3>
+</div>
+<div id="outline-container-orga2471d4" class="outline-3">
+<h3 id="orga2471d4"><span class="todo TODO">TODO</span> Implémentation en python</h3>
+<div class="outline-text-3" id="text-orga2471d4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org88c2581" class="outline-3">
+<h3 id="org88c2581"><span class="todo TODO">TODO</span> Complexité</h3>
+</div>
+</div>
+
+
+<div id="outline-container-org6eef262" class="outline-2">
+<h2 id="org6eef262"><span class="todo TODO">TODO</span> Tri rapide</h2>
+<div class="outline-text-2" id="text-org6eef262">
+</div>
+<div id="outline-container-org394070b" class="outline-3">
+<h3 id="org394070b">Principe</h3>
+</div>
+<div id="outline-container-orgd700d2f" class="outline-3">
+<h3 id="orgd700d2f">Implémentation en python</h3>
+<div class="outline-text-3" id="text-orgd700d2f">
+<div class="org-src-container">
+<pre class="src src-Python">
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6759938" class="outline-3">
+<h3 id="org6759938">Complexité</h3>
+<div class="outline-text-3" id="text-org6759938">
+<div class="org-src-container">
+<pre class="src src-org">1. <span style="font-weight: bold;">[ ]</span> Manger
+2. <span style="font-weight: bold;">[ ]</span> Boire
+3. <span style="font-weight: bold;">[ ]</span> Dormir
+4. <span style="font-weight: bold;">[ ]</span>
+5. <span style="font-weight: bold;">[ ]</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org6913b87" class="outline-2">
+<h2 id="org6913b87"><span class="todo TODO">TODO</span> Tri fusion</h2>
+<div class="outline-text-2" id="text-org6913b87">
+</div>
+<div id="outline-container-orgcefb7c2" class="outline-3">
+<h3 id="orgcefb7c2">Principe</h3>
+</div>
+<div id="outline-container-org8a2bf98" class="outline-3">
+<h3 id="org8a2bf98">Implémentation en python</h3>
+<div class="outline-text-3" id="text-org8a2bf98">
+<div class="org-src-container">
+<pre class="src src-Python">
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgcbaf39c" class="outline-3">
+<h3 id="orgcbaf39c">Complexité</h3>
+</div>
+</div>
 </div>
 </body>
 </html>

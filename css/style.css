@@ -81,16 +81,12 @@ b, strong {
     font-weight: bold;
     color: #333;
 }
-b:before, b:after, strong:before, strong:after {
-    content: "*";
-}
-i:before, i:after, em:before, em:after {
-    content: "/";
-}
+
 hr {
     margin: 0;
     border: 0;
 }
+
 hr:after {
     display: block;
     margin: 20px 0;
@@ -99,18 +95,16 @@ hr:after {
 }
 ul, ol {
     padding: 0;
-    margin: 0 0 20px;
+    margin: 0 0 20px 20px;
 }
+
 code, pre {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 code {
     color: #d14;
 }
-code:before, code:after {
-    content: "=";
-    color: #ccc;
-}
+
 pre {
     display: block;
     margin: 0 0 14px;
@@ -124,6 +118,7 @@ pre {
     word-break: break-all;
     word-wrap: break-word;
 }
+
 blockquote {
     padding: 0 0 0 20px;
     margin: 0 30px 20px -22.5px;
@@ -380,5 +375,3 @@ table th.right, table td.right {
         padding: 30px;
     }
 }
-
-
