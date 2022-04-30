@@ -1,19 +1,25 @@
-#+TITLE: Dovecot
+#+TITLE: Polyedre
 #+AUTHOR:
 #+startup:    align fold nodlcheck hidestars oddeven intestate
 #+language:   fr
 #+options:    H:3 num:nil toc:t \n:nil timestamp:nil creator:nil date:nil ::t |:t ^:t -:t f:t *:t tex:t d:(HIDE) tags:not-in-toc
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org.css" />
 
-* Installation
+* Introduction
 
-The installation of dovecot is straightforward :
+Welcome to my personal website. I am a Computer Science Student with a passion
+for *server administration* and *cybersecurity*.
 
-#+BEGIN_SRC bash
-sudo apt install dovecot
-#+END_SRC
+* Cybersecurity
 
-* Org-Mode Resources
-  :PROPERTIES:
-  :ID:       A6F83C16-B1B9-405A-B996-8D2CA1274DEB
-  :END:
+Here are some ressources that I find very usefull.
+
+** Zaproxy
+
+Zaproxy is a software developped by the OWASP community. I allows the user to
+intercept requests between the browser and the server.
+
+** Hacktricks
+
+https://book.hacktricks.xyz is a very usefull website full of ressources to
+learn pentesting and priviledge escalation.
