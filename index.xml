@@ -16,7 +16,7 @@
       <pubDate>Fri, 29 Apr 2022 00:00:00 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/openpgp_2/</guid>
-      <description>Dans la partie précédente, j&amp;rsquo;ai créé paire de clé GPG primaire, puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé primaire sur un support physique déconnecté d&amp;rsquo;internet et la retirer du trousseau des clés.
+      <description>Dans la partie précédente, j&amp;rsquo;ai créé une paire de clé GPG primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé primaire sur un support physique déconnecté d&amp;rsquo;internet et transférer les clés secondaires sur le trousseau système.
 En cas de maintenance sur les clés secondaires, comme une extension de leur durée de validité ou encore leur renouvellement, il sera nécessaire d&amp;rsquo;utiliser la clé principale, et nous allons voir comment le faire.</description>
     </item>
     
