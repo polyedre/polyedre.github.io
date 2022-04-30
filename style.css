@@ -1,0 +1,56 @@
+div.outline-2 {
+    background-color : white;
+    margin : 20px;
+    padding-top : 20px;
+		 
+ 
+}
+
+.title {
+    font-family : "Lato Hairline";
+    font-style: normal;
+    text-align : center;
+    background-color : #1B1811;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    margin-top: 0px;
+    color:#FAF0BE
+}
+
+h2 {
+    padding-left: 10%;
+    font-family: Latin Modern Sans
+}
+
+h3 {
+    padding-left: 10%;
+    font-family: Daniel;
+    font-weight: bold;
+    color: #3B3C36
+}
+html {
+    background-color : #8F9779
+}
+
+
+body {
+
+    margin: 0px;
+}
+pre.src {
+    background-color : #FAE7B5;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+p {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: justify
+}

@@ -1,0 +1,56 @@
+#+TITLE: Algorithmes de tri
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css" />
+#+OPTIONS: html-style:nil num:nil toc:nil
+
+* Tri par insertion
+
+** Principe
+Le *tri par insertion* fonctionne de la manière suivante : on enlève un par un les éléments de la liste à trier et on les place dans une autre liste de telle sorte à ce que cette autre liste soit triée.
+En pratique il n'est pas nécessaire de créer deux listes distinctes, car la somme des nombres d'élements des deux liste précédentes (celle à trier et celle déjà triée) est toujours égale au nombre d'éléments de la liste initiale.
+Pour chaque élément d'indice =i=, on va donc le placer au début de la liste et l'échanger avec son successeur tant qu'il est plus petit ou plus grand selon le tri que l'on veut effectuer.
+** Implémentation en python
+#+BEGIN_SRC python
+  def tri_insertion(L):
+      for i in range(1,len(L)):
+          temp = L[i]
+          j = i
+          while j > 0 and L[j-1] > temp:
+              L[j] = L[j-1]
+              j -= 1
+          L[j] = temp
+      return L
+#+END_SRC
+
+** Complexité
+La conplexité générale de cette fonction est en $O(n²)$.
+
+
+* Tri à bulle
+
+** Principe
+** Implémentation en python
+#+BEGIN_SRC Python
+
+#+END_SRC
+** Complexité
+
+
+* Tri rapide
+
+** Principe
+** Implémentation en python
+#+BEGIN_SRC Python
+
+#+END_SRC
+** Complexité
+
+
+* Tri fusion
+
+** Principe
+** Implémentation en python
+#+BEGIN_SRC Python
+
+#+END_SRC
+** Complexité
+

@@ -1,0 +1,18 @@
+#+TITLE: Duraan
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css" />
+#+OPTIONS: html-style:nil num:nil toc:nil
+
+* [[file:tris.html][Algorithmes de tri]]                                                :article:
+Résumé des algorithmes de tri en python.
+
+* 2 ème article
+Blablabla
+
+
+
+* 2 ème article
+Blablabla
+
+
+* 2 ème article
+Blablabla
