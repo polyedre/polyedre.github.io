@@ -1,0 +1,86 @@
+baseURL: https://polyedre.github.io/
+title: Polyedre
+paginate: 5
+theme: PaperMod
+
+enableRobotsTXT: true
+buildDrafts: true
+buildFuture: false
+buildExpired: false
+
+minify:
+    disableXML: true
+    minifyOutput: true
+
+params:
+    env: production
+    title: Polyedre
+    description: "Blog personnel sur des sujets DevOps"
+    keywords: [Blog, Portfolio]
+    author: Polyedre
+    images: [""]
+    DateFormat: "January 2, 2006"
+    defaultTheme: auto # dark, light
+    disableThemeToggle: false
+
+    ShowReadingTime: true
+    ShowShareButtons: false
+    ShowPostNavLinks: true
+    ShowBreadCrumbs: true
+    ShowCodeCopyButtons: false
+    disableSpecial1stPost: false
+    disableScrollToTop: false
+    comments: false
+    hidemeta: false
+    hideSummary: false
+    showtoc: false
+    tocopen: false
+
+    assets:
+        favicon: "favicon.jpeg"
+
+    label:
+        text: "Home"
+        icon: profile.jpeg
+        iconHeight: 35
+
+    profileMode:
+        enabled: true
+        title: Polyedre
+        subtitle: "DevOps Engineer. Cybersecurity enthusiast."
+        imageUrl: "profile.jpeg"
+        imageWidth: 200
+        imageHeight: 200
+        imageTitle: Profile image
+        buttons:
+        - name: Posts
+          url: posts
+
+    socialIcons:
+        - name: github
+          url: "https://github.com/polyedre"
+
+    cover:
+        hidden: true
+        hiddenInList: true
+        hiddenInSingle: true
+
+    editPost:
+        URL: "https://github.com/polyedre/polyedre.github.io/content"
+        Text: "Suggest Changes"
+        appendFilePath: true
+
+    fuseOpts:
+        isCaseSensitive: false
+        shouldSort: true
+        location: 0
+        distance: 1000
+        threshold: 0.4
+        minMatchCharLength: 0
+        keys: ["title", "permalink", "summary", "content"]
+menu:
+    main:
+        - identifier: Posts
+          name: Posts
+          url: /posts/
+          weight: 10
