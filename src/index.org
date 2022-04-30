@@ -1,0 +1,19 @@
+#+TITLE: Dovecot
+#+AUTHOR:
+#+startup:    align fold nodlcheck hidestars oddeven intestate
+#+language:   fr
+#+options:    H:3 num:nil toc:t \n:nil timestamp:nil creator:nil date:nil ::t |:t ^:t -:t f:t *:t tex:t d:(HIDE) tags:not-in-toc
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org.css" />
+
+* Installation
+
+The installation of dovecot is straightforward :
+
+#+BEGIN_SRC bash
+sudo apt install dovecot
+#+END_SRC
+
+* Org-Mode Resources
+  :PROPERTIES:
+  :ID:       A6F83C16-B1B9-405A-B996-8D2CA1274DEB
+  :END:
