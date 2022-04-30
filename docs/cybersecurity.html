@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- 2020-10-04 dim. 12:46 -->
+    <!-- 2020-10-04 dim. 15:15 -->
     <meta charset="utf-8">
     <meta name="viewport" content=
     "width=device-width, initial-scale=1">
@@ -76,6 +76,36 @@
                         <li>
                             <a id="org2a2acdf"></a>Detect a SQL
                             Injection<br>
+                        </li>
+                        <li>
+                            <a id="orga662cce"></a>Bypass using
+                            GBK<br>
+                            <div class="outline-text-5" id=
+                            "text-orga662cce">
+                                <p>GBK is a character encoding
+                                format for chinese chars. If this
+                                encoding is enabled, it is possible
+                                to bypass php mysqsl
+                                <code>addslashes</code>
+                                filters.</p>
+                                <p>Indeed, with this function every
+                                single quote is escaped using an
+                                anti-slash. But if we add
+                                <code>%bf</code> before the simple
+                                quote, the anti-slash is caught by
+                                this caracter and the simple quote
+                                become a valid character.</p>
+                                <p>Example: <code>aaa' OR 1 = 1--
+                                -</code> become <code>aaa\' OR 1 =
+                                1-- -</code>; but <code>aaa%BF' OR
+                                1 = 1-- -</code> become
+                                <code>aaa%BF\' OR 1 = 1-- -</code>
+                                and <code>%BF\</code> is one
+                                character.</p>
+                                <p>Reference: <a href=
+                                "https://hydrasky.com/network-security/sql-injection-bypass-php-addslashs-function/">
+                                https://hydrasky.com/network-security/sql-injection-bypass-php-addslashs-function/</a></p>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -173,14 +203,16 @@
                 <h3 id="orgae5408f">Remote Code Execution</h3>
                 <div class="outline-text-3" id="text-orgae5408f">
                 </div>
-                <div id="outline-container-org36e8a67" class=
+                <div id="outline-container-org609b92c" class=
                 "outline-4">
-                    <h4 id="org36e8a67">
-                    <code>preg_replace()</code>&nbsp;&nbsp;&nbsp;<span class="tag"><span class="PHP">PHP</span></span></h4>
+                    <h4 id="org609b92c">The
+                    <code>preg_replace()</code>
+                    function&nbsp;&nbsp;&nbsp;<span class=
+                    "tag"><span class="PHP">PHP</span></span></h4>
                     <div class="outline-text-4" id=
-                    "text-org36e8a67">
-                        <p>Cette fonction permet d’exécuter du code
-                        PHP :</p>
+                    "text-org609b92c">
+                        <p>This function allows to execute PHP
+                        code:</p>
                         <div class="org-src-container">
                             <pre class=
                             "src src-php"><code>preg_replace<span style=

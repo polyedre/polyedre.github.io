@@ -26,6 +26,15 @@ http://example.com/?action=news&news_id=12 union select 1, 2, 3 from users;-- -
 
 **** Detect a SQL Injection
 
+**** Bypass using GBK
+
+GBK is a character encoding format for chinese chars. If this encoding is enabled, it is possible to bypass php mysqsl =addslashes= filters.
+
+Indeed, with this function every single quote is escaped using an anti-slash. But if we add =%bf= before the simple quote, the anti-slash is caught by this caracter and the simple quote become a valid character.
+
+Example: =aaa' OR 1 = 1-- -= become =aaa\' OR 1 = 1-- -=; but =aaa%BF' OR 1 = 1-- -= become =aaa%BF\' OR 1 = 1-- -= and =%BF\= is one character.
+
+Reference: https://hydrasky.com/network-security/sql-injection-bypass-php-addslashs-function/
 
 ** File Inclusion
 
@@ -105,9 +114,6 @@ if (!strcmp($user_input, "Password")) {
     echo "Authenticated !";
 }
 #+END_SRC
-
-#+RESULTS:
-: Authenticated !
 
 * Tools
 ** Zaproxy
