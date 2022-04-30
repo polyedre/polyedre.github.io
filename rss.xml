@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>org-page</title>
+    <link>http://polyedre.github.io/</link>
+    <description>static site generator</description>
+    <pubDate>sam., 09 juin 2018 16:15:22 CEST</pubDate>
+    <lastBuildDate>sam., 09 juin 2018 16:15:22 CEST</lastBuildDate>
+    <docs>http://www.rssboard.org/rss-specification</docs>
+    <generator>Org-page static site generator (https://github.com/kelvinh/org-page)</generator>
+  </channel>
+</rss>
