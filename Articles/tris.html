@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
 <head>
-<!-- 2018-06-09 sam. 21:21 -->
+<!-- 2018-06-09 sam. 21:23 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Algorithmes de tri</title>
@@ -180,7 +180,7 @@
   /*]]>*/-->
 </style>
 <link rel="stylesheet"
-                    href="/css/style.css"
+                    href="../css/style.css"
                     type="text/css"/>
 <script type="text/javascript">
 /*
@@ -255,13 +255,13 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">Algorithmes de tri</h1>
 
-<div id="outline-container-org4314ddc" class="outline-2">
-<h2 id="org4314ddc">Tri par insertion</h2>
-<div class="outline-text-2" id="text-org4314ddc">
+<div id="outline-container-org206ce2f" class="outline-2">
+<h2 id="org206ce2f">Tri par insertion</h2>
+<div class="outline-text-2" id="text-org206ce2f">
 </div>
-<div id="outline-container-org096933e" class="outline-3">
-<h3 id="org096933e">Principe</h3>
-<div class="outline-text-3" id="text-org096933e">
+<div id="outline-container-org757f461" class="outline-3">
+<h3 id="org757f461">Principe</h3>
+<div class="outline-text-3" id="text-org757f461">
 <p>
 Le <b>tri par insertion</b> fonctionne de la manière suivante : on enlève un par un les éléments de la liste à trier et on les place dans une autre liste de telle sorte à ce que cette autre liste soit triée.
 En pratique il n'est pas nécessaire de créer deux listes distinctes, car la somme des nombres d'élements des deux liste précédentes (celle à trier et celle déjà triée) est toujours égale au nombre d'éléments de la liste initiale.
@@ -269,9 +269,9 @@ Pour chaque élément d'indice <code>i</code>, on va donc le placer au début de
 </p>
 </div>
 </div>
-<div id="outline-container-orgfe5bff6" class="outline-3">
-<h3 id="orgfe5bff6">Implémentation en python</h3>
-<div class="outline-text-3" id="text-orgfe5bff6">
+<div id="outline-container-org357d5b7" class="outline-3">
+<h3 id="org357d5b7">Implémentation en python</h3>
+<div class="outline-text-3" id="text-org357d5b7">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #8ac6f2; font-weight: bold;">def</span> <span style="color: #cae682;">tri_insertion</span>(L):
 <span style="background-color: #303030;"> </span>   <span style="color: #8ac6f2; font-weight: bold;">for</span> i <span style="color: #8ac6f2; font-weight: bold;">in</span> <span style="color: #e5786d;">range</span>(1,<span style="color: #e5786d;">len</span>(L)):
@@ -287,9 +287,9 @@ Pour chaque élément d'indice <code>i</code>, on va donc le placer au début de
 </div>
 </div>
 
-<div id="outline-container-org97afb9f" class="outline-3">
-<h3 id="org97afb9f">Complexité</h3>
-<div class="outline-text-3" id="text-org97afb9f">
+<div id="outline-container-org7cad09d" class="outline-3">
+<h3 id="org7cad09d">Complexité</h3>
+<div class="outline-text-3" id="text-org7cad09d">
 <p>
 La conplexité générale de cette fonction est en \(O(n²)\).
 </p>
@@ -298,67 +298,67 @@ La conplexité générale de cette fonction est en \(O(n²)\).
 </div>
 
 
-<div id="outline-container-orgaa2fee9" class="outline-2">
-<h2 id="orgaa2fee9">Tri à bulle</h2>
-<div class="outline-text-2" id="text-orgaa2fee9">
+<div id="outline-container-org7381ea7" class="outline-2">
+<h2 id="org7381ea7">Tri à bulle</h2>
+<div class="outline-text-2" id="text-org7381ea7">
 </div>
-<div id="outline-container-org53e50fe" class="outline-3">
-<h3 id="org53e50fe">Principe</h3>
+<div id="outline-container-org80c5a8f" class="outline-3">
+<h3 id="org80c5a8f">Principe</h3>
 </div>
-<div id="outline-container-orgd2a106f" class="outline-3">
-<h3 id="orgd2a106f"><span class="todo TODO">TODO</span> Implémentation en python</h3>
-<div class="outline-text-3" id="text-orgd2a106f">
+<div id="outline-container-orgf54d89a" class="outline-3">
+<h3 id="orgf54d89a"><span class="todo TODO">TODO</span> Implémentation en python</h3>
+<div class="outline-text-3" id="text-orgf54d89a">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org288cbb6" class="outline-3">
-<h3 id="org288cbb6"><span class="todo TODO">TODO</span> Complexité</h3>
+<div id="outline-container-org878f974" class="outline-3">
+<h3 id="org878f974"><span class="todo TODO">TODO</span> Complexité</h3>
 </div>
 </div>
 
 
-<div id="outline-container-org57161ab" class="outline-2">
-<h2 id="org57161ab"><span class="todo TODO">TODO</span> Tri rapide</h2>
-<div class="outline-text-2" id="text-org57161ab">
+<div id="outline-container-org1f6d1b9" class="outline-2">
+<h2 id="org1f6d1b9"><span class="todo TODO">TODO</span> Tri rapide</h2>
+<div class="outline-text-2" id="text-org1f6d1b9">
 </div>
-<div id="outline-container-org84e0bce" class="outline-3">
-<h3 id="org84e0bce">Principe</h3>
+<div id="outline-container-orgfeeefa0" class="outline-3">
+<h3 id="orgfeeefa0">Principe</h3>
 </div>
-<div id="outline-container-orgdbb1fb4" class="outline-3">
-<h3 id="orgdbb1fb4">Implémentation en python</h3>
-<div class="outline-text-3" id="text-orgdbb1fb4">
+<div id="outline-container-orgff34d23" class="outline-3">
+<h3 id="orgff34d23">Implémentation en python</h3>
+<div class="outline-text-3" id="text-orgff34d23">
 <div class="org-src-container">
 <pre class="src src-Python">
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org303bb5d" class="outline-3">
-<h3 id="org303bb5d">Complexité</h3>
+<div id="outline-container-org57e7619" class="outline-3">
+<h3 id="org57e7619">Complexité</h3>
 </div>
 </div>
 
-<div id="outline-container-org2d2a825" class="outline-2">
-<h2 id="org2d2a825"><span class="todo TODO">TODO</span> Tri fusion</h2>
-<div class="outline-text-2" id="text-org2d2a825">
+<div id="outline-container-org9fe2c1b" class="outline-2">
+<h2 id="org9fe2c1b"><span class="todo TODO">TODO</span> Tri fusion</h2>
+<div class="outline-text-2" id="text-org9fe2c1b">
 </div>
-<div id="outline-container-org7e1f731" class="outline-3">
-<h3 id="org7e1f731">Principe</h3>
+<div id="outline-container-org4c3e847" class="outline-3">
+<h3 id="org4c3e847">Principe</h3>
 </div>
-<div id="outline-container-org8ffcd27" class="outline-3">
-<h3 id="org8ffcd27">Implémentation en python</h3>
-<div class="outline-text-3" id="text-org8ffcd27">
+<div id="outline-container-org14d14f2" class="outline-3">
+<h3 id="org14d14f2">Implémentation en python</h3>
+<div class="outline-text-3" id="text-org14d14f2">
 <div class="org-src-container">
 <pre class="src src-Python">
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org6de9d91" class="outline-3">
-<h3 id="org6de9d91">Complexité</h3>
+<div id="outline-container-org3b647ea" class="outline-3">
+<h3 id="org3b647ea">Complexité</h3>
 </div>
 </div>
 </div>
