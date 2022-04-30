@@ -4,10 +4,11 @@ date: 2022-04-29T00:00:00+01:00
 draft: false
 ---
 
-Dans la [partie précédente](openpgp_1.md), j'ai créé paire de clé GPG primaire,
-puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je
-peux maintenant sauvegarder la clé primaire sur un support physique déconnecté
-d'internet et la retirer du trousseau des clés.
+Dans la [partie précédente](openpgp_1.md), j'ai créé une paire de clé GPG
+primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque
+usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé
+primaire sur un support physique déconnecté d'internet et transférer les clés
+secondaires sur le trousseau système.
 
 En cas de maintenance sur les clés secondaires, comme une extension de leur
 durée de validité ou encore leur renouvellement, il sera nécessaire d'utiliser
@@ -16,20 +17,22 @@ la clé principale, et nous allons voir comment le faire.
 ## Choix du support
 
 Plusieurs supports sont disponibles pour sauvegarder la clé primaire. Plusieurs
-facteurs sont à prendre en compte et qui peuvent être organisés sous le spectre
-de l'acronyme CIA, pour Confidentiality, Integrity, et Availability
+facteurs sont à prendre en compte. Ils peuvent être organisés sous le spectre de
+l'acronyme CIA, pour Confidentiality, Integrity, et Availability
 (Confidentialité, Intégrité et Disponibilité pour les non-bilingues) :
 
 - Concernant la confidentialité, il est évident que je ne souhaite pas qu'une
   personne malintentionnée puisse facilement accéder cette clé. Dans mon modèle
-  de sécuritè, je considère irréaliste le fait qu'une personne entre par
-  effraction chez moi pour voler cette clé.
+  de sécurité, je considère irréaliste le fait qu'une personne entre par
+  effraction chez moi pour voler cette clé. Je vais donc la sauvegarder chez moi
+  dans un format non-chiffré mais nécessitant tout de même le mot de passe de la
+  clé pour l'utiliser.
 
-- Concernant la disponibilité, il faut que la clé puisse être accédée pendant au
-  moins 2 ans, puisque c'est la durée pendant laquelle elle a été configurée
-  pour être valide (voir la partie précédente). Le fichier doit être accessible
-  depuis chez moi et je ne pense pas qu'il soit nécessaire d'y accéder depuis un
-  autre endroit.
+- Concernant la disponibilité, je veux pouvoir accéder à la clé pendant au moins
+  2 ans, puisque c'est la durée pendant laquelle elle a été configurée pour être
+  valide (voir la partie précédente). Le fichier doit être accessible depuis
+  chez moi et je ne pense pas qu'il soit nécessaire d'y accéder depuis un autre
+  endroit.
 
 - L'intégrité de la clé est assurée par le fait que la clé publique est
   accessible indépendamment de la clé et qu'il est possible de vérifier
@@ -40,7 +43,7 @@ de simplicité, la clé primaire va être sauvegardée sur une clé USB. Pour le
 je vais aussi la sauvegarder sur un format papier, mais ça sera peut-être pour
 une autre fois.
 
-## Sauvegarde et suppression de la clé primaire
+## Sauvegarde de la clé primaire, transfert des clés secondaires
 
 Pour sauvegarder la clé primaire, rien de plus simple. La commande suivante
 permet d'exporter la clé privée dans un fichier :
@@ -186,7 +189,7 @@ ssb   rsa4096 2022-04-30 [A] [expires: 2023-04-30]
 ```
 
 Pour valider le changement, il suffit d'exporter à nouveau les clés secondaire
-et de les importer dans le trousseau du système !
+et de les importer dans le trousseau du système.
 
 ## conclusion
 
