@@ -37,6 +37,13 @@ body {
     width: 900px;
   }
 }
+code {
+  padding: 2px 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #333;
+  font-size: 80%;
+}
 .title {
   margin: 0.8em auto;
   color: #000;
