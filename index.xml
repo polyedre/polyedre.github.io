@@ -9,7 +9,17 @@
       <link>https://polyedre.github.io/</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 29 Mar 2022 00:00:00 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 29 Apr 2022 00:00:00 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>À la recherche du workflow GPG parfait (Partie 2)</title>
+      <link>https://polyedre.github.io/posts/openpgp_2/</link>
+      <pubDate>Fri, 29 Apr 2022 00:00:00 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/openpgp_2/</guid>
+      <description>Dans la partie précédente, j&amp;rsquo;ai créé paire de clé GPG primaire, puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé primaire sur un support physique déconnecté d&amp;rsquo;internet et la retirer du trousseau des clés.
+En cas de maintenance sur les clés secondaires, comme une extension de leur durée de validité ou encore leur renouvellement, il sera nécessaire d&amp;rsquo;utiliser la clé principale, et nous allons voir comment le faire.</description>
+    </item>
+    
     <item>
       <title>À la recherche du workflow GPG parfait (Partie 1)</title>
       <link>https://polyedre.github.io/posts/openpgp_1/</link>
