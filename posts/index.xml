@@ -9,7 +9,17 @@
       <link>https://polyedre.github.io/</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 29 Apr 2022 00:00:00 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Dec 2022 12:57:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Identifying unused files in Docker images with Dive</title>
+      <link>https://polyedre.github.io/posts/dive/</link>
+      <pubDate>Sat, 10 Dec 2022 12:57:17 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/dive/</guid>
+      <description>One of the challenges of using Docker is that images can often be quite large, especially for interpreted languages. Large Docker images increase pull time and disk space usage, making it difficult to manage and deploy applications. In this article, we&amp;rsquo;ll take a look at a tool called &amp;ldquo;dive&amp;rdquo; that can help to optimize the size of Docker images.
+Dive is a command-line tool that allows users to analyze the addition of each layer to the filesystem of a Docker image.</description>
+    </item>
+    
     <item>
       <title>À la recherche du workflow GPG parfait (Partie 2)</title>
       <link>https://polyedre.github.io/posts/openpgp_2/</link>
