@@ -9,7 +9,18 @@
       <link>https://polyedre.github.io/</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 10 Dec 2022 12:57:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Wed, 31 May 2023 19:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reduce Kube State Metrics&#39;s sample count by 45%</title>
+      <link>https://polyedre.github.io/posts/scaling-kube-state-metrics/</link>
+      <pubDate>Wed, 31 May 2023 19:41:17 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/scaling-kube-state-metrics/</guid>
+      <description>Kube State Metrics is a service that listen to the Kubernetes API server and generates metrics about the state of the resources (Pods, Deployments, Namespaces&amp;hellip;). The metrics are exported on the HTTP endpoint /metrics on the listening port (default 8080). They are served as plaintext and can be crawled directly by Prometheus.
+For each Kubernetes resource, some metrics are available. For Pods for instance, the metrics listed in this file are available.</description>
+    </item>
+    
     <item>
       <title>Identifying unused files in Docker images with Dive</title>
       <link>https://polyedre.github.io/posts/dive/</link>
