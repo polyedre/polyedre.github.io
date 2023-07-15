@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://polyedre.github.io/</loc>
-    <lastmod>2023-05-31T19:41:17+01:00</lastmod>
+    <lastmod>2023-07-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://polyedre.github.io/posts/</loc>
-    <lastmod>2023-05-31T19:41:17+01:00</lastmod>
+    <lastmod>2023-07-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://polyedre.github.io/posts/ktx/</loc>
+    <lastmod>2023-07-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://polyedre.github.io/posts/scaling-kube-state-metrics/</loc>
     <lastmod>2023-05-31T19:41:17+01:00</lastmod>
@@ -26,7 +29,5 @@
     <loc>https://polyedre.github.io/categories/</loc>
   </url><url>
     <loc>https://polyedre.github.io/tags/</loc>
-  </url><url>
-    <loc>https://polyedre.github.io/posts/ktx/</loc>
   </url>
 </urlset>

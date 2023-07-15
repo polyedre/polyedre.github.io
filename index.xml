@@ -10,7 +10,18 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 31 May 2023 19:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 15 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using multiple kubectl contexts at the same time</title>
+      <link>https://polyedre.github.io/posts/ktx/</link>
+      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/ktx/</guid>
+      <description>Kubernetes clusters rarely come alone. If you have access to at least one, in no time you&amp;rsquo;ll need to switch your kubectl context to access other clusters.
+But what if you need to access two clusters simultaneously?
+This is a problem I had multiple times per week (even per day) for a few months. When comparing two Kubernetes clusters, if often had to switch the kubectl context between each command.</description>
+    </item>
+    
     <item>
       <title>Reduce Kube State Metrics&#39;s sample count by 45%</title>
       <link>https://polyedre.github.io/posts/scaling-kube-state-metrics/</link>
@@ -60,17 +71,6 @@ Pour résumer, après avoir configurer GPG, je vais créer une clé primaire, 3 
       <description>Microk8s is a framework designed to start a Kubernetes cluster. According to Canonical, which maintain the project, it is production ready, requires low maintenance and the Kubernetes cluster uses minimal resources.
 Microk8s is cross-platform and is available on Windows, Linux and macOS. One feature that is really cool is that it comes with a plugin system to enable some features in the cluster lovely easy.
 It also supports ARM if you want to run a Kubernetes cluster on Raspberry Pies.</description>
-    </item>
-    
-    <item>
-      <title>Using multiple kubectl contexts at the same time</title>
-      <link>https://polyedre.github.io/posts/ktx/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://polyedre.github.io/posts/ktx/</guid>
-      <description>Kubernetes clusters rarely come alone. If you have access to at least one, in no time you&amp;rsquo;ll need to switch your kubectl context to access other clusters.
-But what if you need to access two clusters simultaneously?
-This is a problem I had multiple times per week (even per day) for a few months. When comparing two Kubernetes clusters, if often had to switch the kubectl context between each command.</description>
     </item>
     
   </channel>
