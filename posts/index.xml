@@ -10,7 +10,17 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 15 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 19 Oct 2023 15:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Let&#39;s filter Prometheus metrics exposed by Softwares</title>
+      <link>https://polyedre.github.io/posts/filter-metrics/</link>
+      <pubDate>Thu, 19 Oct 2023 15:41:17 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/filter-metrics/</guid>
+      <description>This post discusses about the limit of Prometheus crawlers when a software exposes too much metrics, and provides a solution to limit the number of metrics exported by Softwares that cannot be modified.
+Sometimes you&amp;rsquo;re just crawling too much The number of metrics exported on the /metrics endpoint of a Software can impact the performances of Prometheus crawlers. There is at least two ways crawlers could fail to fetch metrics for a software.</description>
+    </item>
+    
     <item>
       <title>Using multiple kubectl contexts at the same time</title>
       <link>https://polyedre.github.io/posts/ktx/</link>
