@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://polyedre.github.io/posts/filter-metrics/</loc>
-    <lastmod>2023-10-19T15:41:17+01:00</lastmod>
-  </url><url>
     <loc>https://polyedre.github.io/</loc>
-    <lastmod>2023-10-19T15:41:17+01:00</lastmod>
+    <lastmod>2024-04-01T12:41:17+01:00</lastmod>
   </url><url>
     <loc>https://polyedre.github.io/posts/</loc>
+    <lastmod>2024-04-01T12:41:17+01:00</lastmod>
+  </url><url>
+    <loc>https://polyedre.github.io/posts/filter-metrics/</loc>
     <lastmod>2023-10-19T15:41:17+01:00</lastmod>
   </url><url>
     <loc>https://polyedre.github.io/posts/ktx/</loc>
@@ -16,9 +16,6 @@
   </url><url>
     <loc>https://polyedre.github.io/posts/scaling-kube-state-metrics/</loc>
     <lastmod>2023-05-31T19:41:17+01:00</lastmod>
-  </url><url>
-    <loc>https://polyedre.github.io/posts/guix-helm-charts/</loc>
-    <lastmod>2023-04-01T12:41:17+01:00</lastmod>
   </url><url>
     <loc>https://polyedre.github.io/posts/dive/</loc>
     <lastmod>2022-12-10T12:57:17+01:00</lastmod>

@@ -10,7 +10,7 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 19 Oct 2023 15:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 01 Apr 2024 12:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Let&#39;s filter Prometheus metrics exposed by Softwares</title>
       <link>https://polyedre.github.io/posts/filter-metrics/</link>
@@ -40,18 +40,6 @@ This is a problem I had multiple times per week (even per day) for a few months.
       <guid>https://polyedre.github.io/posts/scaling-kube-state-metrics/</guid>
       <description>Kube State Metrics is a service that listen to the Kubernetes API server and generates metrics about the state of the resources (Pods, Deployments, Namespaces&amp;hellip;). The metrics are exported on the HTTP endpoint /metrics on the listening port (default 8080). They are served as plaintext and can be crawled directly by Prometheus.
 For each Kubernetes resource, some metrics are available. For Pods for instance, the metrics listed in this file are available.</description>
-    </item>
-    
-    <item>
-      <title>Packaging and Deploying Helm Charts with Guix</title>
-      <link>https://polyedre.github.io/posts/guix-helm-charts/</link>
-      <pubDate>Sat, 01 Apr 2023 12:41:17 +0100</pubDate>
-      
-      <guid>https://polyedre.github.io/posts/guix-helm-charts/</guid>
-      <description>My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.
-I&amp;rsquo;ve encountered mutiple limitations with Helm.
-The Go templating engine sometimes is not enough. The only functions available to Chart Helm maintainers have been added explicitely. You cannot add custom ones easily.
-The values.yaml file is great at reducing the interface between the Helm Chart maintainer and the users, but when an option is missing, the only ways are to fork or contribute a pull request, and this lead to complex values.</description>
     </item>
     
     <item>
