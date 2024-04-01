@@ -10,7 +10,19 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 01 Apr 2024 12:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 01 Apr 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Packaging and Deploying Helm Charts with Guix</title>
+      <link>https://polyedre.github.io/posts/guix-helm-charts/</link>
+      <pubDate>Mon, 01 Apr 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/guix-helm-charts/</guid>
+      <description>My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.
+I&amp;rsquo;ve encountered mutiple limitations with Helm.
+The Go templating engine sometimes is not enough. The only functions available to Chart Helm maintainers have been added explicitely. You cannot add custom ones easily.
+The values.yaml file is great at reducing the interface between the Helm Chart maintainer and the users, but when an option is missing, the only ways are to fork or contribute a pull request, and this lead to complex values.</description>
+    </item>
+    
     <item>
       <title>Let&#39;s filter Prometheus metrics exposed by Softwares</title>
       <link>https://polyedre.github.io/posts/filter-metrics/</link>
