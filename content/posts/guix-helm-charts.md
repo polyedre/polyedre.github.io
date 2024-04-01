@@ -110,3 +110,6 @@ Setup](https://guix.gnu.org/manual/en/html_node/The-Perfect-Setup.html) in Guix'
 This is a page describing how to configure Emacs to develop with Guix. I was able to configure
 Geiser in Emacs, but something must be wrong about by load-path because the Geiser REPL was not able
 to import Guix modules.
+
+Edit: Thanks to @Z572@mastodon.social for pointing out that when working on Guile for Guix in Emacs,
+I can use command `guix repl` instead of `guile`. https://mastodon.social/@Z572/112195758829383364
