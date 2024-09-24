@@ -10,17 +10,21 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 01 Apr 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Sep 2024 14:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Packaging and Deploying Helm Charts with Guix</title>
       <link>https://polyedre.github.io/posts/guix-helm-charts/</link>
       <pubDate>Mon, 01 Apr 2024 00:00:00 +0000</pubDate>
       
       <guid>https://polyedre.github.io/posts/guix-helm-charts/</guid>
-      <description>My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.
-I&amp;rsquo;ve encountered mutiple limitations with Helm.
-The Go templating engine sometimes is not enough. The only functions available to Chart Helm maintainers have been added explicitely. You cannot add custom ones easily.
-The values.yaml file is great at reducing the interface between the Helm Chart maintainer and the users, but when an option is missing, the only ways are to fork or contribute a pull request, and this lead to complex values.</description>
+      <description>&lt;p&gt;My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve encountered mutiple limitations with Helm.&lt;/p&gt;
+&lt;p&gt;The Go templating engine sometimes is not enough. The only functions available to Chart Helm
+maintainers have been added explicitely. You cannot add custom ones easily.&lt;/p&gt;
+&lt;p&gt;The values.yaml file is great at reducing the interface between the Helm Chart maintainer and the
+users, but when an option is missing, the only ways are to fork or contribute a pull request, and
+this lead to complex values.yaml Chart like those of bitnami (1427 lines):
+&lt;a href=&#34;https://github.com/bitnami/charts/blob/main/bitnami/argo-workflows/values.yaml&#34;&gt;https://github.com/bitnami/charts/blob/main/bitnami/argo-workflows/values.yaml&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -29,8 +33,13 @@ The values.yaml file is great at reducing the interface between the Helm Chart m
       <pubDate>Thu, 19 Oct 2023 15:41:17 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/filter-metrics/</guid>
-      <description>This post discusses about the limit of Prometheus crawlers when a software exposes too much metrics, and provides a solution to limit the number of metrics exported by Softwares that cannot be modified.
-Sometimes you&amp;rsquo;re just crawling too much The number of metrics exported on the /metrics endpoint of a Software can impact the performances of Prometheus crawlers. There is at least two ways crawlers could fail to fetch metrics for a software.</description>
+      <description>&lt;p&gt;This post discusses about the limit of Prometheus crawlers when a software
+exposes too much metrics, and provides a solution to limit the number of metrics
+exported by Softwares that cannot be modified.&lt;/p&gt;
+&lt;h2 id=&#34;sometimes-youre-just-crawling-too-much&#34;&gt;Sometimes you&amp;rsquo;re just crawling too much&lt;/h2&gt;
+&lt;p&gt;The number of metrics exported on the &lt;code&gt;/metrics&lt;/code&gt; endpoint of a Software can
+impact the performances of Prometheus crawlers. There is at least two ways
+crawlers could fail to fetch metrics for a software.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -39,9 +48,12 @@ Sometimes you&amp;rsquo;re just crawling too much The number of metrics exported
       <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
       
       <guid>https://polyedre.github.io/posts/ktx/</guid>
-      <description>Kubernetes clusters rarely come alone. If you have access to at least one, in no time you&amp;rsquo;ll need to switch your kubectl context to access other clusters.
-But what if you need to access two clusters simultaneously?
-This is a problem I had multiple times per week (even per day) for a few months. When comparing two Kubernetes clusters, if often had to switch the kubectl context between each command.</description>
+      <description>&lt;p&gt;Kubernetes clusters rarely come alone. If you have access to at least one, in no
+time you&amp;rsquo;ll need to switch your kubectl context to access other clusters.&lt;/p&gt;
+&lt;p&gt;But what if you need to access two clusters &lt;em&gt;simultaneously&lt;/em&gt;?&lt;/p&gt;
+&lt;p&gt;This is a problem I had multiple times per week (even per day) for a few months.
+When comparing two Kubernetes clusters, if often had to switch the kubectl context
+between each command.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -50,8 +62,16 @@ This is a problem I had multiple times per week (even per day) for a few months.
       <pubDate>Wed, 31 May 2023 19:41:17 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/scaling-kube-state-metrics/</guid>
-      <description>Kube State Metrics is a service that listen to the Kubernetes API server and generates metrics about the state of the resources (Pods, Deployments, Namespaces&amp;hellip;). The metrics are exported on the HTTP endpoint /metrics on the listening port (default 8080). They are served as plaintext and can be crawled directly by Prometheus.
-For each Kubernetes resource, some metrics are available. For Pods for instance, the metrics listed in this file are available.</description>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kubernetes/kube-state-metrics&#34;&gt;Kube State Metrics&lt;/a&gt; is a
+service that listen to the Kubernetes API server and generates metrics about the
+state of the resources (Pods, Deployments, Namespaces&amp;hellip;).
+The metrics are exported on the HTTP endpoint &lt;code&gt;/metrics&lt;/code&gt; on the listening port
+(default 8080). They are served as plaintext and can be crawled directly by
+Prometheus.&lt;/p&gt;
+&lt;p&gt;For each Kubernetes resource, some metrics are available. For Pods for
+instance, the metrics listed in &lt;a href=&#34;https://github.com/kubernetes/kube-state-metrics/blob/main/docs/pod-metrics.md&#34;&gt;this
+file&lt;/a&gt;
+are available. This includes &lt;code&gt;kube_pod_info&lt;/code&gt; and &lt;code&gt;kube_pod_status_phase&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -60,8 +80,8 @@ For each Kubernetes resource, some metrics are available. For Pods for instance,
       <pubDate>Sat, 10 Dec 2022 12:57:17 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/dive/</guid>
-      <description>One of the challenges of using Docker is that images can often be quite large, especially for interpreted languages. Large Docker images increase pull time and disk space usage, making it difficult to manage and deploy applications. In this article, we&amp;rsquo;ll take a look at a tool called &amp;ldquo;dive&amp;rdquo; that can help to optimize the size of Docker images.
-Dive is a command-line tool that allows users to analyze the addition of each layer to the filesystem of a Docker image.</description>
+      <description>&lt;p&gt;One of the challenges of using Docker is that images can often be quite large, especially for interpreted languages. Large Docker images increase pull time and disk space usage, making it difficult to manage and deploy applications. In this article, we&amp;rsquo;ll take a look at a tool called &amp;ldquo;dive&amp;rdquo; that can help to optimize the size of Docker images.&lt;/p&gt;
+&lt;p&gt;Dive is a command-line tool that allows users to analyze the addition of each layer to the filesystem of a Docker image. This information can be used to identify unused or unnecessary files, which can then be removed to reduce the size of the image. Let&amp;rsquo;s take a look at how I used dive to optimize the size of the Docker image for the open-source web scanner Wapiti.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -70,8 +90,14 @@ Dive is a command-line tool that allows users to analyze the addition of each la
       <pubDate>Fri, 29 Apr 2022 00:00:00 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/openpgp_2/</guid>
-      <description>Dans la partie précédente, j&amp;rsquo;ai créé une paire de clé GPG primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé primaire sur un support physique déconnecté d&amp;rsquo;internet et transférer les clés secondaires sur le trousseau système.
-En cas de maintenance sur les clés secondaires, comme une extension de leur durée de validité ou encore leur renouvellement, il sera nécessaire d&amp;rsquo;utiliser la clé principale, et nous allons voir comment le faire.</description>
+      <description>&lt;p&gt;Dans la &lt;a href=&#34;openpgp_1.md&#34;&gt;partie précédente&lt;/a&gt;, j&amp;rsquo;ai créé une paire de clé GPG
+primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque
+usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé
+primaire sur un support physique déconnecté d&amp;rsquo;internet et transférer les clés
+secondaires sur le trousseau système.&lt;/p&gt;
+&lt;p&gt;En cas de maintenance sur les clés secondaires, comme une extension de leur
+durée de validité ou encore leur renouvellement, il sera nécessaire d&amp;rsquo;utiliser
+la clé principale, et nous allons voir comment le faire.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -80,8 +106,13 @@ En cas de maintenance sur les clés secondaires, comme une extension de leur dur
       <pubDate>Tue, 29 Mar 2022 00:00:00 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/openpgp_1/</guid>
-      <description>Les outils pour créer des clés GPG existent depuis une vingtaine d&amp;rsquo;années maintenant, et pourtant la gestion des clés est toujours aussi rugueuse. Dans cet article je vais essayer de résumer tout ce que j&amp;rsquo;ai compris et mis en place pour respecter les Best Practices.
-Pour résumer, après avoir configurer GPG, je vais créer une clé primaire, 3 sous-clés spécifiques à chaque usage puis la clé primaire sera sauvegardée sur un support offline et retirée du trousseau.</description>
+      <description>&lt;p&gt;Les outils pour créer des clés GPG existent depuis une vingtaine d&amp;rsquo;années
+maintenant, et pourtant la gestion des clés est toujours aussi rugueuse. Dans
+cet article je vais essayer de résumer tout ce que j&amp;rsquo;ai compris et mis en place
+pour respecter les &lt;em&gt;Best Practices&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Pour résumer, après avoir configurer GPG, je vais créer une clé primaire, 3
+sous-clés spécifiques à chaque usage puis la clé primaire sera sauvegardée sur
+un support offline et retirée du trousseau.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -90,9 +121,14 @@ Pour résumer, après avoir configurer GPG, je vais créer une clé primaire, 3 
       <pubDate>Sat, 12 Feb 2022 12:41:17 +0100</pubDate>
       
       <guid>https://polyedre.github.io/posts/microk8s/</guid>
-      <description>Microk8s is a framework designed to start a Kubernetes cluster. According to Canonical, which maintain the project, it is production ready, requires low maintenance and the Kubernetes cluster uses minimal resources.
-Microk8s is cross-platform and is available on Windows, Linux and macOS. One feature that is really cool is that it comes with a plugin system to enable some features in the cluster lovely easy.
-It also supports ARM if you want to run a Kubernetes cluster on Raspberry Pies.</description>
+      <description>&lt;p&gt;Microk8s is a framework designed to start a Kubernetes cluster. According to
+Canonical, which maintain the project, it is production ready, requires low
+maintenance and the Kubernetes cluster uses minimal resources.&lt;/p&gt;
+&lt;p&gt;Microk8s is cross-platform and is available on Windows, Linux and macOS. One
+feature that is really cool is that it comes with a plugin system to enable some
+features in the cluster lovely easy.&lt;/p&gt;
+&lt;p&gt;It also supports ARM if you want to run a Kubernetes cluster on Raspberry Pies.
+However, you&amp;rsquo;ll need to make sure you use fast storage.&lt;/p&gt;</description>
     </item>
     
   </channel>
