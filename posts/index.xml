@@ -5,17 +5,18 @@
     <link>https://polyedre.github.io/posts/</link>
     <description>Recent content in Posts on Polyedre</description>
     <image>
+      <title>Polyedre</title>
       <url>https://polyedre.github.io/</url>
       <link>https://polyedre.github.io/</link>
     </image>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo -- 0.135.0</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 25 Sep 2024 14:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Sep 2024 14:41:17 +0100</lastBuildDate>
+    <atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Why Kubernetes NodePort Stops at 32767?</title>
       <link>https://polyedre.github.io/posts/why-2767-nodeports/</link>
       <pubDate>Wed, 25 Sep 2024 14:41:17 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/why-2767-nodeports/</guid>
       <description>&lt;p&gt;In Kubernetes, NodePort allows external traffic to access services via a
 specific port range, typically 30000-32767. But while starting at port 30000
@@ -26,12 +27,10 @@ for a 15-bit unsigned integer. Limiting the range to 32767 was therefore chosen
 to ensure the compatibility with systems that may treat ports as signed
 integers. This prevents potential issues in networking software.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Packaging and Deploying Helm Charts with Guix</title>
       <link>https://polyedre.github.io/posts/guix-helm-charts/</link>
       <pubDate>Mon, 01 Apr 2024 00:00:00 +0000</pubDate>
-      
       <guid>https://polyedre.github.io/posts/guix-helm-charts/</guid>
       <description>&lt;p&gt;My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ve encountered mutiple limitations with Helm.&lt;/p&gt;
@@ -42,12 +41,10 @@ users, but when an option is missing, the only ways are to fork or contribute a 
 this lead to complex values.yaml Chart like those of bitnami (1427 lines):
 &lt;a href=&#34;https://github.com/bitnami/charts/blob/main/bitnami/argo-workflows/values.yaml&#34;&gt;https://github.com/bitnami/charts/blob/main/bitnami/argo-workflows/values.yaml&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Let&#39;s filter Prometheus metrics exposed by Softwares</title>
       <link>https://polyedre.github.io/posts/filter-metrics/</link>
       <pubDate>Thu, 19 Oct 2023 15:41:17 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/filter-metrics/</guid>
       <description>&lt;p&gt;This post discusses about the limit of Prometheus crawlers when a software
 exposes too much metrics, and provides a solution to limit the number of metrics
@@ -57,12 +54,10 @@ exported by Softwares that cannot be modified.&lt;/p&gt;
 impact the performances of Prometheus crawlers. There is at least two ways
 crawlers could fail to fetch metrics for a software.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Using multiple kubectl contexts at the same time</title>
       <link>https://polyedre.github.io/posts/ktx/</link>
       <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://polyedre.github.io/posts/ktx/</guid>
       <description>&lt;p&gt;Kubernetes clusters rarely come alone. If you have access to at least one, in no
 time you&amp;rsquo;ll need to switch your kubectl context to access other clusters.&lt;/p&gt;
@@ -71,12 +66,10 @@ time you&amp;rsquo;ll need to switch your kubectl context to access other cluste
 When comparing two Kubernetes clusters, if often had to switch the kubectl context
 between each command.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Reduce Kube State Metrics&#39;s sample count by 45%</title>
       <link>https://polyedre.github.io/posts/scaling-kube-state-metrics/</link>
       <pubDate>Wed, 31 May 2023 19:41:17 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/scaling-kube-state-metrics/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kubernetes/kube-state-metrics&#34;&gt;Kube State Metrics&lt;/a&gt; is a
 service that listen to the Kubernetes API server and generates metrics about the
@@ -89,22 +82,18 @@ instance, the metrics listed in &lt;a href=&#34;https://github.com/kubernetes/ku
 file&lt;/a&gt;
 are available. This includes &lt;code&gt;kube_pod_info&lt;/code&gt; and &lt;code&gt;kube_pod_status_phase&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Identifying unused files in Docker images with Dive</title>
       <link>https://polyedre.github.io/posts/dive/</link>
       <pubDate>Sat, 10 Dec 2022 12:57:17 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/dive/</guid>
       <description>&lt;p&gt;One of the challenges of using Docker is that images can often be quite large, especially for interpreted languages. Large Docker images increase pull time and disk space usage, making it difficult to manage and deploy applications. In this article, we&amp;rsquo;ll take a look at a tool called &amp;ldquo;dive&amp;rdquo; that can help to optimize the size of Docker images.&lt;/p&gt;
 &lt;p&gt;Dive is a command-line tool that allows users to analyze the addition of each layer to the filesystem of a Docker image. This information can be used to identify unused or unnecessary files, which can then be removed to reduce the size of the image. Let&amp;rsquo;s take a look at how I used dive to optimize the size of the Docker image for the open-source web scanner Wapiti.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>À la recherche du workflow GPG parfait (Partie 2)</title>
       <link>https://polyedre.github.io/posts/openpgp_2/</link>
       <pubDate>Fri, 29 Apr 2022 00:00:00 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/openpgp_2/</guid>
       <description>&lt;p&gt;Dans la &lt;a href=&#34;openpgp_1.md&#34;&gt;partie précédente&lt;/a&gt;, j&amp;rsquo;ai créé une paire de clé GPG
 primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque
@@ -115,12 +104,10 @@ secondaires sur le trousseau système.&lt;/p&gt;
 durée de validité ou encore leur renouvellement, il sera nécessaire d&amp;rsquo;utiliser
 la clé principale, et nous allons voir comment le faire.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>À la recherche du workflow GPG parfait (Partie 1)</title>
       <link>https://polyedre.github.io/posts/openpgp_1/</link>
       <pubDate>Tue, 29 Mar 2022 00:00:00 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/openpgp_1/</guid>
       <description>&lt;p&gt;Les outils pour créer des clés GPG existent depuis une vingtaine d&amp;rsquo;années
 maintenant, et pourtant la gestion des clés est toujours aussi rugueuse. Dans
@@ -130,12 +117,10 @@ pour respecter les &lt;em&gt;Best Practices&lt;/em&gt;.&lt;/p&gt;
 sous-clés spécifiques à chaque usage puis la clé primaire sera sauvegardée sur
 un support offline et retirée du trousseau.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Microk8s, multi-usage Kubernetes</title>
       <link>https://polyedre.github.io/posts/microk8s/</link>
       <pubDate>Sat, 12 Feb 2022 12:41:17 +0100</pubDate>
-      
       <guid>https://polyedre.github.io/posts/microk8s/</guid>
       <description>&lt;p&gt;Microk8s is a framework designed to start a Kubernetes cluster. According to
 Canonical, which maintain the project, it is production ready, requires low
@@ -146,6 +131,5 @@ features in the cluster lovely easy.&lt;/p&gt;
 &lt;p&gt;It also supports ARM if you want to run a Kubernetes cluster on Raspberry Pies.
 However, you&amp;rsquo;ll need to make sure you use fast storage.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>
