@@ -12,6 +12,22 @@
     <language>en</language>
     <lastBuildDate>Wed, 25 Sep 2024 14:41:17 +0100</lastBuildDate><atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Why Kubernetes NodePort Stops at 32767?</title>
+      <link>https://polyedre.github.io/posts/why-2767-nodeports/</link>
+      <pubDate>Wed, 25 Sep 2024 14:41:17 +0100</pubDate>
+      
+      <guid>https://polyedre.github.io/posts/why-2767-nodeports/</guid>
+      <description>&lt;p&gt;In Kubernetes, NodePort allows external traffic to access services via a
+specific port range, typically 30000-32767. But while starting at port 30000
+makes sense because Kubernetes does not want to conflict with other ports of the
+host, I wondered why Kubernetes supports only 2767 NodePorts by default.&lt;/p&gt;
+&lt;p&gt;After digging a little bit, I found that the value 32767 represents the maximum
+for a 15-bit unsigned integer. Limiting the range to 32767 was therefore chosen
+to ensure the compatibility with systems that may treat ports as signed
+integers. This prevents potential issues in networking software.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Packaging and Deploying Helm Charts with Guix</title>
       <link>https://polyedre.github.io/posts/guix-helm-charts/</link>
       <pubDate>Mon, 01 Apr 2024 00:00:00 +0000</pubDate>
