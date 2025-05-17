@@ -1,6 +1,5 @@
 baseURL: https://polyedre.github.io/
 title: Polyedre
-paginate: 5
 theme: PaperMod
 
 enableRobotsTXT: true
@@ -36,6 +35,8 @@ params:
     hideSummary: false
     showtoc: false
     tocopen: false
+
+    social: true
 
     assets:
         favicon: "favicon.ico"
