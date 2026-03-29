@@ -119,22 +119,6 @@ modest. You save a second on connection setup, a few milliseconds per file
 operation, and maybe 40ms on a magit refresh. In exchange, you need to compile,
 deploy, and maintain a server binary on every remote host.
 
-That trade-off might make sense if:
-- You have **high-latency connections** (200ms+ round-trips), where the
-  per-operation savings multiply significantly
-- You do **heavy magit work on remote repos** and can use tramp-rpc's batching
-- You open **many new remote connections** throughout the day
-
-It probably doesn't if:
-- Your SSH connections have ControlMaster enabled (they likely do)
-- Most of your remote work is editing files you've already opened
-- You don't want another binary to deploy and keep in sync
-
-flit adds an extra wrinkle: it's not even a TRAMP backend. It's a complete TRAMP
-replacement with its own path syntax (`/flit!host/path`), so it doesn't
-integrate with your existing TRAMP configuration. And as the benchmarks show,
-its `process-file` performance makes magit significantly worse.
-
 Stock TRAMP isn't glamorous. But with ControlMaster doing the heavy lifting,
 it's doing a more reasonable job than its reputation suggests. Sometimes the
 boring tool is fine.
