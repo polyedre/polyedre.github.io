@@ -14,14 +14,15 @@
     <lastBuildDate>Sun, 29 Mar 2026 10:00:00 +0100</lastBuildDate>
     <atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>The new vibecoded TRAMP alternatives are probably not worth it</title>
+      <title>The new vibecoded TRAMP alternatives are probably not worth it -- except if you use Magit</title>
       <link>https://polyedre.github.io/posts/benchmarking-tramp-backends/</link>
       <pubDate>Sun, 29 Mar 2026 10:00:00 +0100</pubDate>
       <guid>https://polyedre.github.io/posts/benchmarking-tramp-backends/</guid>
       <description>&lt;p&gt;Every few months, someone posts about how painfully slow TRAMP is. And honestly,
-they&amp;rsquo;re not wrong &amp;ndash; opening a remote file and waiting for that modeline to stop
-spinning is one of those small frustrations that add up.&lt;/p&gt;
-&lt;p&gt;So when two new projects showed up promising to fix this, I got curious. &lt;a href=&#34;https://github.com/ArthurHeymans/emacs-tramp-rpc&#34;&gt;tramp-rpc&lt;/a&gt;
+they&amp;rsquo;re not wrong (opening a remote file and waiting for that modeline to stop
+spinning is one of those small frustrations that add up).&lt;/p&gt;
+&lt;p&gt;So when two new projects showed up promising to fix this, I got curious.
+&lt;a href=&#34;https://github.com/ArthurHeymans/emacs-tramp-rpc&#34;&gt;tramp-rpc&lt;/a&gt;
 uses a Rust server speaking MessagePack-RPC,
 &lt;a href=&#34;https://github.com/muirdm/flit.el&#34;&gt;flit.el&lt;/a&gt; uses a Go server with JSON-RPC.
 Both claim significant speedups. I decided to actually measure it.&lt;/p&gt;</description>
