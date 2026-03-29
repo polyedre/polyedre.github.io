@@ -6,7 +6,9 @@ enableRobotsTXT: true
 buildDrafts: true
 buildFuture: false
 buildExpired: false
-googleAnalytics: "G-PL8DXXK8VN"
+services:
+    googleAnalytics:
+        id: "G-PL8DXXK8VN"
 
 minify:
     disableXML: true
