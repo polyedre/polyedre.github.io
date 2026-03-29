@@ -14,7 +14,7 @@
     <lastBuildDate>Sun, 29 Mar 2026 10:00:00 +0100</lastBuildDate>
     <atom:link href="https://polyedre.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>The new vibecoded TRAMP alternatives are probably not worth it -- except if you use Magit</title>
+      <title>The new TRAMP alternatives are probably not worth it -- except if you use Magit</title>
       <link>https://polyedre.github.io/posts/benchmarking-tramp-backends/</link>
       <pubDate>Sun, 29 Mar 2026 10:00:00 +0100</pubDate>
       <guid>https://polyedre.github.io/posts/benchmarking-tramp-backends/</guid>
