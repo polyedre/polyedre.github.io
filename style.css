@@ -468,6 +468,18 @@ article.post code {
 }
 article.post pre code { background: transparent; padding: 0; color: inherit; font-size: inherit; }
 
+/* images scale to the column / viewport */
+article.post img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+article.post p > img { margin: .25rem 0; }
+/* prevent long inline code / URLs from forcing horizontal scroll */
+article.post p, article.post li { overflow-wrap: break-word; }
+
 /* syntax tokens (pre-rendered by build script) */
 article.post pre .tok-kw  { color: hsl(var(--hue), 60%, 75%); font-weight: 700; }
 article.post pre .tok-str { color: hsl(140, 45%, 65%); }
