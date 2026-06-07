@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 220" role="img" aria-label="polyedre — infrastructure engineer">
+  <defs>
+    <style>
+      .bg     { fill: #14101c; }
+      .border { fill: none; stroke: #2b2535; stroke-width: 1; }
+      .acc    { fill: #b794d8; }
+      .acc-fg { fill: #14101c; }
+      .fg     { fill: #e6e8eb; }
+      .dim    { fill: #a8abb0; }
+      .rule   { stroke: #2b2535; stroke-width: 1; }
+      text    { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    </style>
+  </defs>
+
+  <!-- card -->
+  <rect x="0.5" y="0.5" width="879" height="219" rx="8" class="bg"/>
+  <rect x="0.5" y="0.5" width="879" height="219" rx="8" class="border"/>
+
+  <!-- top status bar -->
+  <path d="M8 1 H872 a8 8 0 0 1 8 8 V44 H0 V9 a8 8 0 0 1 8 -8 Z" class="acc"/>
+  <text x="22" y="29" font-size="16" font-weight="700" class="acc-fg">▌ polyedre@home</text>
+  <text x="858" y="29" font-size="14" font-weight="600" class="acc-fg" text-anchor="end" opacity="0.75">hue 280°</text>
+
+  <!-- section rule with label -->
+  <line x1="36" y1="84" x2="80" y2="84" class="rule"/>
+  <text x="92" y="89" font-size="13" font-weight="600" class="dim" letter-spacing="2">WHOAMI</text>
+  <line x1="170" y1="84" x2="848" y2="84" class="rule"/>
+
+  <!-- name + tagline -->
+  <text x="36" y="138" font-size="40" font-weight="700" class="fg">polyedre</text>
+  <text x="36" y="172" font-size="18" font-weight="500" class="dim">infrastructure engineer</text>
+
+  <!-- accent tech row -->
+  <text x="36" y="200" font-size="16" font-weight="600" class="acc">
+    <tspan>›</tspan>
+    <tspan dx="6">Kubernetes</tspan>
+    <tspan dx="6" class="dim">·</tspan>
+    <tspan dx="6">Guix</tspan>
+    <tspan dx="6" class="dim">·</tspan>
+    <tspan dx="6">Emacs</tspan>
+  </text>
+</svg>
