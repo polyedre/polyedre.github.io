@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Complex Configuration Is a Programming Language in Denial — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Complex Configuration Is a Programming Language in Denial</h1>
+      <div class="meta">
+        <span><b>date</b> 2026-06-07</span>
+        <span><b>read</b> 6 min</span>
+        <span><b>tags</b> #infra #guix #scheme</span>
+      </div>
+    </header>
+
+<p>A few years ago, as I started my DevOps/infrastructure engineering journey, I had to learn all the tooling available in the ecosystem. At first, I felt joy writing Helm Charts, Terraform modules, Ansible playbooks. But as time went on, I found myself being more and more frustrated with minor annoyances in these tools.</p>
+<p>A code smell is the feeling that something is wrong when reading a piece of code. It may hint at a deeper problem in how a line, a function is written, or even the architecture of the code.</p>
+<p>The more I used these tools, the more I felt that something was wrong with them. Here is what most Helm charts look like now:</p>
+<pre><code class="lang-yaml">{{- if .Values.ingress.enabled }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+        {{- range .Values.ingress.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType | default &quot;Prefix&quot; }}
+        {{- end }}
+{{- end }}</code></pre>
+<p>The templating takes more space than the code. Something is wrong.</p>
+<p>Another smell is that lots of Helm charts use <code>indent</code>/<code>nindent</code>. Now that I look back, I wonder how we accepted at some point to template YAML files (i.e., structured data) with a text engine.</p>
+<p>Terraform also smells. If you used a little bit Terraform, I'm sure you used something like <code>count = var.enabled ? 1 : 0</code> to conditionnaly create a resource. I could add that Terraform's <code>merge</code> function is a shallow merge, and there's no way to do a native deep merge.</p>
+<p>All of these tools implemented some kind of Domain Specific Language. For Helm, it's the Go template engine with a minimal standard library. For Terraform, its HCL. Other tools like Ansible and Kustomize also uses DSL: the use of <code>when</code>, <code>includes</code> and <code>block</code> in Ansible is an attempt at that! And Kustomize and hieradata do it with a custom YAML syntax and file structure. These all are languages in YAML costumes!</p>
+<p>But all these DSL are intentionnally limited. The standard library they allow is fixed. And I feel constrained using them. What if we used a real programming language?</p>
+
+<h2>What a real language makes possible</h2>
+<p>Here's an example of what the configuration of several Kubernetes resources could look like, written in Scheme. Ignore the parentheses, the point is what real computation capabilities brings:</p>
+<pre><code class="lang-scheme">(with-namespace <span class="tok-str">&quot;loulou&quot;</span>
+  (app #:name <span class="tok-str">&quot;loulou&quot;</span> #:image <span class="tok-str">&quot;secure.io/loulou:2.1&quot;</span> #:port <span class="tok-num">9000</span> #:replicas <span class="tok-num">2</span>
+       #:env-from '((configMap <span class="tok-str">&quot;loulou-config&quot;</span>))
+       #:volumes  '((secret <span class="tok-str">&quot;loulou-secret&quot;</span> <span class="tok-str">&quot;/etc/loulou/secret&quot;</span>))
+       #:resources <span class="tok-str">&quot;200m-*/256Mi&quot;</span>)
+  (configmap #:name <span class="tok-str">&quot;loulou-config&quot;</span>
+             #:data '((LOG_LEVEL . <span class="tok-str">&quot;debug&quot;</span>) (CACHE_SIZE . <span class="tok-str">&quot;256&quot;</span>)))
+  (secret    #:name <span class="tok-str">&quot;loulou-secret&quot;</span>
+             #:data '((DB_PASSWORD . <span class="tok-str">&quot;bG91bG91LXNlY3JldA==&quot;</span>))))
+
+(checksum-config)
+(compliance-all <span class="tok-str">&quot;secure.io&quot;</span>)</code></pre>
+<p>In the example, <code>app</code> is a function returning a Deployment and a Service. In Terraform, you would have to build a new module to do this abstraction, but here, it comes nearly free.</p>
+<p>The Deployment mounts a secret at /etc/loulou/secret. I did not have to add to both the <code>volumes</code> and the <code>volumeMounts</code> sections.</p>
+<p>Writing resource definition is annoying. As a proof of concept, the string <code>&quot;200m-*/256Mi&quot;</code> is a resource spec parsed by code into requests and limits. It manages defaults and best practices, like &quot;memory request&quot; = &quot;memory limit&quot;.</p>
+
+<h3>Apply systemic changes to all the resources</h3>
+<p>To be honest, the strongest part of this example is this line:</p>
+<pre><code class="lang-scheme">(checksum-config)</code></pre>
+<p>Each time I wrote a Helm chart, I manually add an annotation with the checksum of all the Configmap and Secrets it depends on. This ensures that the Pods of the Deployment are restarted whenever the Secrets or Configmap are modified.</p>
+<p>With this line, instead of having to add the checksum computation manually for each Deployment by passing explicitely the Secrets and Configmap it depends on, all workload resources are automatically patched!</p>
+<p>After every resource is built, the function <code>checksum-config</code> walks the whole set, finds each Deployment, resolves the ConfigMaps and Secrets that Deployment mounts, hashes their contents, and writes the digest onto the pod template as an annotation. Change a ConfigMap and the annotation changes and the pods roll — config-driven rollouts across every workload in the repo. And the function also tracks references to a ConfigMap that doesn't exist, and reports its findings.</p>
+
+<h3>Compliance for free</h3>
+<p>Using code, it's also very easy to check compliance rules. For example you can ensure that:</p>
+<ul>
+<li>every workload sets requests</li>
+<li>there's no privileged containers</li>
+<li>images only comes from a specific registry</li>
+</ul>
+<p>Construction, derivation, validation — one substrate, one in-memory value, before anything is applied. Helm does the first, badly. Kustomize does it by merging. A policy engine does the third, separately, in Rego, after the fact. Nothing else does all three in one place, because each is computation — the thing &quot;config is data, not code&quot; was meant to forbid.</p>
+
+<h2>Best practices</h2>
+<p>Here are some best practices I found while using real programming languages:</p>
+<ol>
+<li>Always review the rendered diff, and not just the configuration code. If there's a bug in the code, it can become a systemic bug and affect all your resources. Let's say the parsing of the resource-spec string I mentioned earlier fails and inverts cpu and memory requests. This could be dramatic.</li>
+<li>This also means that the library part of your code needs unit tests to catch these kinds of bugs.</li>
+<li>The compliance rules in the rendering engine is shift-left. It does not replace compliance tools that run in your clusters.</li>
+<li>Your rendering code has to be deterministic. You now have freedom, you need to use it carefully.</li>
+</ol>
+
+<h2>Presenting Hexol</h2>
+<p><a href="https://github.com/polyedre/hexol">Hexol</a> is a rendering engine written in Guile Scheme. I chose Guile because of one feature shared by all LISP implementations: <a href="https://en.wikipedia.org/wiki/Homoiconicity">Homoiconicity</a>, the property of a language to manipulate a code written in the same language as data.</p>
+<p>A Hexol inventory is a Guile file that returns a list of Operations. Each Operation is a function that takes a State as input, manipulates it, and returns the new state. By chaining all the operations (in functional programming the term is &quot;folding&quot;), the program actually generates the inventory.</p>
+
+<svg viewBox="0 0 640 180" role="img" aria-label="An initial state S0 is transformed by operation op1 into state S1, then op2 into S2, and so on until operation opN produces the final state SN. Each operation is a function from State to State, chained left to right as a fold." style="width:100%;height:auto;max-width:640px;display:block;margin:1.75rem auto" font-family="var(--mono)">
+  <defs>
+    <marker id="hx-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="var(--fg-mute)"/>
+    </marker>
+  </defs>
+  <text x="320" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="var(--fg)">Operations fold one State into the next</text>
+
+  <!-- arrows (drawn first, under the boxes) -->
+  <g stroke="var(--fg-mute)" stroke-width="1.5" marker-end="url(#hx-arrow)">
+    <line x1="64"  y1="96" x2="84"  y2="96"/>
+    <line x1="150" y1="96" x2="170" y2="96"/>
+    <line x1="228" y1="96" x2="248" y2="96"/>
+    <line x1="314" y1="96" x2="334" y2="96"/>
+    <line x1="392" y1="96" x2="412" y2="96"/>
+    <line x1="446" y1="96" x2="466" y2="96"/>
+    <line x1="532" y1="96" x2="552" y2="96"/>
+  </g>
+  <text x="429" y="101" text-anchor="middle" font-size="16" fill="var(--fg-mute)">⋯</text>
+
+  <!-- state boxes -->
+  <g fill="var(--bg-elev)" stroke="var(--border)">
+    <rect x="8"   y="76" width="56" height="40" rx="5"/>
+    <rect x="172" y="76" width="56" height="40" rx="5"/>
+    <rect x="336" y="76" width="56" height="40" rx="5"/>
+    <rect x="554" y="76" width="64" height="40" rx="5"/>
+  </g>
+  <g text-anchor="middle" font-size="13" fill="var(--fg)">
+    <text x="36"  y="101">S₀</text>
+    <text x="200" y="101">S₁</text>
+    <text x="364" y="101">S₂</text>
+    <text x="586" y="101">Sₙ</text>
+  </g>
+
+  <!-- operation boxes -->
+  <g fill="var(--accent-bg)" stroke="var(--accent)">
+    <rect x="86"  y="78" width="64" height="36" rx="5"/>
+    <rect x="250" y="78" width="64" height="36" rx="5"/>
+    <rect x="468" y="78" width="64" height="36" rx="5"/>
+  </g>
+  <g text-anchor="middle" font-size="12" fill="var(--accent)">
+    <text x="118" y="100">op₁</text>
+    <text x="282" y="100">op₂</text>
+    <text x="500" y="100">opₙ</text>
+  </g>
+
+  <text x="320" y="152" text-anchor="middle" font-size="12" fill="var(--fg-dim)">each op : State → State — folded left to right into the inventory</text>
+</svg>
+<p>That's it. The core of the library provides Operations for basic tasks (deep-merge, delete, copy, move, etc), and the rest of the library provides helper functions for a few specific types of inventories (Terraform, Kubernetes, Ansible, and even Ledger and Database Schemas).</p>
+<p>This blog post is not about Hexol, so I'll leave it at that.</p>
+
+<hr>
+
+<p>If you struggle with complex inventories, many manifests and fight tools like Helm and Terraform, please consider using real programming languages to generate your inventories.</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#infra</a> <a href="../../index.html">#guix</a> <a href="../../index.html">#scheme</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>
