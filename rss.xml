@@ -2,85 +2,92 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>polyedre</title>
-    <link>https://polyedre.github.io/</link>
+    <link>https://polyed.re/</link>
     <description>A personal techy blog. Infra, scheme, weird workflows.</description>
     <language>en</language>
-    <lastBuildDate>Sun, 29 Mar 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://polyedre.github.io/rss.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>Sun, 07 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://polyed.re/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Complex Configuration Is a Programming Language in Denial</title>
+      <link>https://polyed.re/posts/config-is-a-programming-language-in-denial/</link>
+      <guid>https://polyed.re/posts/config-is-a-programming-language-in-denial/</guid>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate>
+      <description>A few years ago, as I started my DevOps/infrastructure engineering journey, I had to learn all the tooling available in the ecosystem. At first, I felt joy writing Helm Charts, Terraform modules, Ansible playbooks. But as time went on, I found myself being more and more frustrated with minor annoyances in these tools.</description>
+    </item>
     <item>
       <title>The new TRAMP alternatives are probably not worth it -- except if you use Magit</title>
-      <link>https://polyedre.github.io/posts/benchmarking-tramp-backends/</link>
-      <guid>https://polyedre.github.io/posts/benchmarking-tramp-backends/</guid>
+      <link>https://polyed.re/posts/benchmarking-tramp-backends/</link>
+      <guid>https://polyed.re/posts/benchmarking-tramp-backends/</guid>
       <pubDate>Sun, 29 Mar 2026 00:00:00 +0000</pubDate>
       <description>Every few months, someone posts about how painfully slow TRAMP is. And honestly, they&#x27;re not wrong (opening a remote file and waiting for that modeline to stop spinning is one of those small frustrations that add up).</description>
     </item>
     <item>
       <title>Deploy and Manage a Guix VM in OpenStack: A Comprehensive Guide</title>
-      <link>https://polyedre.github.io/posts/manage-guix-VM-in-openstack/</link>
-      <guid>https://polyedre.github.io/posts/manage-guix-VM-in-openstack/</guid>
+      <link>https://polyed.re/posts/manage-guix-VM-in-openstack/</link>
+      <guid>https://polyed.re/posts/manage-guix-VM-in-openstack/</guid>
       <pubDate>Wed, 21 May 2025 00:00:00 +0000</pubDate>
       <description>It&#x27;s been a few months since I started using Guix as the operating system on my personal laptop, and I&#x27;ve been continuously impressed by its unique approach to system management. Unlike traditional package managers, Guix offers a fully declarative, functional approach to system configuration. This means that your entire system—from packages to services to system parameters—can be defined in code and reproducibly deployed.</description>
     </item>
     <item>
       <title>Why Kubernetes NodePort Stops at 32767?</title>
-      <link>https://polyedre.github.io/posts/why-2767-nodeports/</link>
-      <guid>https://polyedre.github.io/posts/why-2767-nodeports/</guid>
+      <link>https://polyed.re/posts/why-2767-nodeports/</link>
+      <guid>https://polyed.re/posts/why-2767-nodeports/</guid>
       <pubDate>Wed, 25 Sep 2024 00:00:00 +0000</pubDate>
       <description>In Kubernetes, NodePort allows external traffic to access services via a specific port range, typically 30000-32767. But while starting at port 30000 makes sense because Kubernetes does not want to conflict with other ports of the host, I wondered why Kubernetes supports only 2767 NodePorts by default.</description>
     </item>
     <item>
       <title>Packaging and Deploying Helm Charts with Guix</title>
-      <link>https://polyedre.github.io/posts/guix-helm-charts/</link>
-      <guid>https://polyedre.github.io/posts/guix-helm-charts/</guid>
+      <link>https://polyed.re/posts/guix-helm-charts/</link>
+      <guid>https://polyed.re/posts/guix-helm-charts/</guid>
       <pubDate>Mon, 01 Apr 2024 00:00:00 +0000</pubDate>
       <description>My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.</description>
     </item>
     <item>
       <title>Let&#x27;s filter Prometheus metrics exposed by Softwares</title>
-      <link>https://polyedre.github.io/posts/filter-metrics/</link>
-      <guid>https://polyedre.github.io/posts/filter-metrics/</guid>
+      <link>https://polyed.re/posts/filter-metrics/</link>
+      <guid>https://polyed.re/posts/filter-metrics/</guid>
       <pubDate>Thu, 19 Oct 2023 00:00:00 +0000</pubDate>
       <description>This post discusses about the limit of Prometheus crawlers when a software exposes too much metrics, and provides a solution to limit the number of metrics exported by Softwares that cannot be modified.</description>
     </item>
     <item>
       <title>Using multiple kubectl contexts at the same time</title>
-      <link>https://polyedre.github.io/posts/ktx/</link>
-      <guid>https://polyedre.github.io/posts/ktx/</guid>
+      <link>https://polyed.re/posts/ktx/</link>
+      <guid>https://polyed.re/posts/ktx/</guid>
       <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
       <description>Kubernetes clusters rarely come alone. If you have access to at least one, in no time you&#x27;ll need to switch your kubectl context to access other clusters.</description>
     </item>
     <item>
       <title>Reduce Kube State Metrics&#x27;s sample count by 45%</title>
-      <link>https://polyedre.github.io/posts/scaling-kube-state-metrics/</link>
-      <guid>https://polyedre.github.io/posts/scaling-kube-state-metrics/</guid>
+      <link>https://polyed.re/posts/scaling-kube-state-metrics/</link>
+      <guid>https://polyed.re/posts/scaling-kube-state-metrics/</guid>
       <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
       <description>Kube State Metrics is a service that listen to the Kubernetes API server and generates metrics about the state of the resources (Pods, Deployments, Namespaces...). The metrics are exported on the HTTP endpoint /metrics on the listening port (default 8080). They are served as plaintext and can be crawled directly by Prometheus.</description>
     </item>
     <item>
       <title>Identifying unused files in Docker images with Dive</title>
-      <link>https://polyedre.github.io/posts/dive/</link>
-      <guid>https://polyedre.github.io/posts/dive/</guid>
+      <link>https://polyed.re/posts/dive/</link>
+      <guid>https://polyed.re/posts/dive/</guid>
       <pubDate>Sat, 10 Dec 2022 00:00:00 +0000</pubDate>
       <description>One of the challenges of using Docker is that images can often be quite large, especially for interpreted languages. Large Docker images increase pull time and disk space usage, making it difficult to manage and deploy applications. In this article, we&#x27;ll take a look at a tool called &quot;dive&quot; that can help to optimize the size of Docker images.</description>
     </item>
     <item>
       <title>À la recherche du workflow GPG parfait (Partie 2)</title>
-      <link>https://polyedre.github.io/posts/openpgp_2/</link>
-      <guid>https://polyedre.github.io/posts/openpgp_2/</guid>
+      <link>https://polyed.re/posts/openpgp_2/</link>
+      <guid>https://polyed.re/posts/openpgp_2/</guid>
       <pubDate>Fri, 29 Apr 2022 00:00:00 +0000</pubDate>
       <description>Dans la partie précédente, j&#x27;ai créé une paire de clé GPG primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé primaire sur un support physique déconnecté d&#x27;internet et transférer les clés secondaires sur le trousseau système.</description>
     </item>
     <item>
       <title>À la recherche du workflow GPG parfait (Partie 1)</title>
-      <link>https://polyedre.github.io/posts/openpgp_1/</link>
-      <guid>https://polyedre.github.io/posts/openpgp_1/</guid>
+      <link>https://polyed.re/posts/openpgp_1/</link>
+      <guid>https://polyed.re/posts/openpgp_1/</guid>
       <pubDate>Tue, 29 Mar 2022 00:00:00 +0000</pubDate>
       <description>Les outils pour créer des clés GPG existent depuis une vingtaine d&#x27;années maintenant, et pourtant la gestion des clés est toujours aussi rugueuse. Dans cet article je vais essayer de résumer tout ce que j&#x27;ai compris et mis en place pour respecter les Best Practices.</description>
     </item>
     <item>
       <title>Microk8s, multi-usage Kubernetes</title>
-      <link>https://polyedre.github.io/posts/microk8s/</link>
-      <guid>https://polyedre.github.io/posts/microk8s/</guid>
+      <link>https://polyed.re/posts/microk8s/</link>
+      <guid>https://polyed.re/posts/microk8s/</guid>
       <pubDate>Sat, 12 Feb 2022 00:00:00 +0000</pubDate>
       <description>Microk8s is a framework designed to start a Kubernetes cluster. According to Canonical, which maintain the project, it is production ready, requires low maintenance and the Kubernetes cluster uses minimal resources.</description>
     </item>
