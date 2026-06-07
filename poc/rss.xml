@@ -9,8 +9,8 @@
     <atom:link href="https://polyed.re/rss.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>Languages in YAML Costumes</title>
-      <link>https://polyed.re/posts/config-is-a-programming-language-in-denial/</link>
-      <guid>https://polyed.re/posts/config-is-a-programming-language-in-denial/</guid>
+      <link>https://polyed.re/posts/languages-in-yaml-costumes/</link>
+      <guid>https://polyed.re/posts/languages-in-yaml-costumes/</guid>
       <pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate>
       <description>A few years ago, as I started my DevOps/infrastructure engineering journey, I had to learn all the tooling available in the ecosystem. At first, I felt joy writing Helm Charts, Terraform modules, Ansible playbooks. But as time went on, I found myself being more and more frustrated with minor annoyances in these tools.</description>
     </item>
