@@ -53,25 +53,25 @@
 
 <h2>What a real language makes possible</h2>
 <p>Here's an example of what the configuration of several Kubernetes resources could look like, written in Scheme. Ignore the parentheses, the point is what real computation capabilities brings:</p>
-<pre><code class="lang-scheme">(with-namespace <span class="tok-str">&quot;loulou&quot;</span>
-  (app #:name <span class="tok-str">&quot;loulou&quot;</span> #:image <span class="tok-str">&quot;secure.io/loulou:2.1&quot;</span> #:port <span class="tok-num">9000</span> #:replicas <span class="tok-num">2</span>
+<pre><code class="lang-scheme">(<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L73">with-namespace</a> <span class="tok-str">&quot;loulou&quot;</span>
+  (<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L354">app</a> #:name <span class="tok-str">&quot;loulou&quot;</span> #:image <span class="tok-str">&quot;secure.io/loulou:2.1&quot;</span> #:port <span class="tok-num">9000</span> #:replicas <span class="tok-num">2</span>
        #:env-from '((configMap <span class="tok-str">&quot;loulou-config&quot;</span>))
        #:volumes  '((secret <span class="tok-str">&quot;loulou-secret&quot;</span> <span class="tok-str">&quot;/etc/loulou/secret&quot;</span>))
        #:resources <span class="tok-str">&quot;200m-*/256Mi&quot;</span>)
-  (configmap #:name <span class="tok-str">&quot;loulou-config&quot;</span>
+  (<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L261">configmap</a> #:name <span class="tok-str">&quot;loulou-config&quot;</span>
              #:data '((LOG_LEVEL . <span class="tok-str">&quot;debug&quot;</span>) (CACHE_SIZE . <span class="tok-str">&quot;256&quot;</span>)))
-  (secret    #:name <span class="tok-str">&quot;loulou-secret&quot;</span>
+  (<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L269">secret</a>    #:name <span class="tok-str">&quot;loulou-secret&quot;</span>
              #:data '((DB_PASSWORD . <span class="tok-str">&quot;bG91bG91LXNlY3JldA==&quot;</span>))))
 
-(checksum-config)
-(compliance-all <span class="tok-str">&quot;secure.io&quot;</span>)</code></pre>
+(<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L522">checksum-config</a>)
+(<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L744">compliance-all</a> <span class="tok-str">&quot;secure.io&quot;</span>)</code></pre>
 <p>In the example, <code>app</code> is a function returning a Deployment and a Service. In Terraform, you would have to build a new module to do this abstraction, but here, it comes nearly free.</p>
 <p>The Deployment mounts a secret at /etc/loulou/secret. I did not have to add to both the <code>volumes</code> and the <code>volumeMounts</code> sections.</p>
 <p>Writing resource definition is annoying. As a proof of concept, the string <code>&quot;200m-*/256Mi&quot;</code> is a resource spec parsed by code into requests and limits. It manages defaults and best practices, like &quot;memory request&quot; = &quot;memory limit&quot;.</p>
 
 <h3>Apply systemic changes to all the resources</h3>
 <p>To be honest, the strongest part of this example is this line:</p>
-<pre><code class="lang-scheme">(checksum-config)</code></pre>
+<pre><code class="lang-scheme">(<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L522">checksum-config</a>)</code></pre>
 <p>Each time I wrote a Helm chart, I manually add an annotation with the checksum of all the Configmap and Secrets it depends on. This ensures that the Pods of the Deployment are restarted whenever the Secrets or Configmap are modified.</p>
 <p>With this line, instead of having to add the checksum computation manually for each Deployment by passing explicitely the Secrets and Configmap it depends on, all workload resources are automatically patched!</p>
 <p>After every resource is built, the function <code>checksum-config</code> walks the whole set, finds each Deployment, resolves the ConfigMaps and Secrets that Deployment mounts, hashes their contents, and writes the digest onto the pod template as an annotation. Change a ConfigMap and the annotation changes and the pods roll — config-driven rollouts across every workload in the repo. And the function also tracks references to a ConfigMap that doesn't exist, and reports its findings.</p>
