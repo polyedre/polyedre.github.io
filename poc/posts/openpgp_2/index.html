@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>À la recherche du workflow GPG parfait (Partie 2) — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>À la recherche du workflow GPG parfait (Partie 2)</h1>
+      <div class="meta">
+        <span><b>date</b> 2022-04-29</span>
+        <span><b>read</b> 5 min</span>
+        <span><b>tags</b> #security</span>
+      </div>
+    </header>
+
+<p>Dans la <a href="../openpgp_1/index.html">partie précédente</a>, j'ai créé une paire de clé GPG primaire sur un trousseau temporaire, puis 3 clés secondaires pour chaque usage : signer, chiffrer et authentifier. Je peux maintenant sauvegarder la clé primaire sur un support physique déconnecté d'internet et transférer les clés secondaires sur le trousseau système.</p>
+<p>En cas de maintenance sur les clés secondaires, comme une extension de leur durée de validité ou encore leur renouvellement, il sera nécessaire d'utiliser la clé principale, et nous allons voir comment le faire.</p>
+<h2>Choix du support</h2>
+<p>Plusieurs supports sont disponibles pour sauvegarder la clé primaire. Plusieurs facteurs sont à prendre en compte. Ils peuvent être organisés sous le spectre de l'acronyme CIA, pour Confidentiality, Integrity, et Availability (Confidentialité, Intégrité et Disponibilité pour les non-bilingues) :</p>
+<ul><li>Concernant la confidentialité, il est évident que je ne souhaite pas qu'une</li></ul>
+<p>  personne malintentionnée puisse facilement accéder cette clé. Dans mon modèle   de sécurité, je considère irréaliste le fait qu'une personne entre par   effraction chez moi pour voler cette clé. Je vais donc la sauvegarder chez moi   dans un format non-chiffré mais nécessitant tout de même le mot de passe de la   clé pour l'utiliser.</p>
+<ul><li>Concernant la disponibilité, je veux pouvoir accéder à la clé pendant au moins</li></ul>
+<p>  2 ans, puisque c'est la durée pendant laquelle elle a été configurée pour être   valide (voir la partie précédente). Le fichier doit être accessible depuis   chez moi et je ne pense pas qu'il soit nécessaire d'y accéder depuis un autre   endroit.</p>
+<ul><li>L'intégrité de la clé est assurée par le fait que la clé publique est</li></ul>
+<p>  accessible indépendamment de la clé et qu'il est possible de vérifier   facilement si la clé publique correspond à la clé privée.</p>
+<p>On va être honnête, c'est beaucoup de blabla juste pour annoncer que par soucis de simplicité, la clé primaire va être sauvegardée sur une clé USB. Pour le fun, je vais aussi la sauvegarder sur un format papier, mais ça sera peut-être pour une autre fois.</p>
+<h2>Sauvegarde de la clé primaire, transfert des clés secondaires</h2>
+<p>Pour sauvegarder la clé primaire, rien de plus simple. La commande suivante permet d'exporter la clé privée dans un fichier :</p>
+<pre><code class="lang-sh">gpg --armor --export-secret-keys &quot;polyedre@disroot.org&quot; &gt; polyedre.key</code></pre>
+<p>Il suffit ensuite de placer ce fichier sur une clé USB.</p>
+<p>Sauvegardons également les clés secondaires dans leur fichier.</p>
+<pre><code class="lang-sh">gpg --armor --export-secret-subkeys &quot;polyedre@disroot.org&quot; &gt; polyedre.subkeys</code></pre>
+<p>Je peut maintenant importer ces clés dans le trousseau par défaut du système. Rappelons-nous, dans la partie 1, la clé PGP a été générée dans un trousseau temporaire.</p>
+<pre><code class="lang-sh">unset GNUPGHOME
+gpg --import polyedre.subkeys</code></pre>
+<p>Et voilà !</p>
+<p>Mes clés sont importées et disponibles :</p>
+<pre><code class="lang-sh">polyedre@machine $ gpg --list-secret-keys
+/home/polyedre/.gnupg/pubring.kbx
+------------------------------
+sec#  rsa4096 2022-04-30 [C] [expires: 2024-04-29]
+      054350865F0474F5D2497D69913174CACD67AE0F
+uid           [ unknown] Polyedre &lt;polyedre@disroot.org&gt;
+ssb   rsa4096 2022-04-30 [S] [expires: 2023-04-30]
+ssb   rsa4096 2022-04-30 [E] [expires: 2023-04-30]
+ssb   rsa4096 2022-04-30 [A] [expires: 2023-04-30]</code></pre>
+<p>On remarquera la présence du croisillon (<code>#</code>) indiquant que la clé privée principale n'est pas présente dans le trousseau.</p>
+<h2>Utiliser la clé primaire</h2>
+<p>Les 3 clés secondaires peuvent maintenant être utilisées normalement. Comme promis, voyons comment utiliser la clé primaire pour modifier les clés secondaires.</p>
+<p>Je ne veux pas que ma clé primaire soit dans le trousseau su système, donc comme pour la partie 1, je vais créer un trousseau temporaire.</p>
+<pre><code class="lang-sh">export GNUPGHOME=$(mktemp -d)</code></pre>
+<p>J'y importe la clé primaire sauvegardée sur la clé USB.</p>
+<pre><code class="lang-sh">gpg --import polyedre.key</code></pre>
+<p>Automatiquement, les clés secondaires sont disponibles :</p>
+<pre><code class="lang-sh">polyedre@machine $ gpg --list-secret-keys
+/tmp/tmp.7pQf2b7qXY/pubring.kbx
+-------------------------------
+sec   rsa4096 2022-04-30 [C] [expires: 2024-04-29]
+      054350865F0474F5D2497D69913174CACD67AE0F
+uid           [ unknown] Polyedre &lt;polyedre@disroot.org&gt;
+ssb   rsa4096 2022-04-30 [S] [expires: 2023-04-30]
+ssb   rsa4096 2022-04-30 [E] [expires: 2023-04-30]
+ssb   rsa4096 2022-04-30 [A] [expires: 2023-04-30]</code></pre>
+<p>Je peux ensuite augmenter la durée de validité d'une des clés secondaires :</p>
+<pre><code class="lang-sh">polyedre@machine $ gpg --edit-key polyedre@disroot.org
+Secret key is available.
+
+sec  rsa4096/913174CACD67AE0F
+     created: 2022-04-30  expires: 2024-04-29  usage: C
+     trust: unknown       validity: unknown
+ssb  rsa4096/505199DE46ABA45C
+     created: 2022-04-30  expires: 2023-04-30  usage: S
+ssb  rsa4096/8CDCD83070A02AFB
+     created: 2022-04-30  expires: 2023-04-30  usage: E
+ssb  rsa4096/41C03C2FDB86A1EC
+     created: 2022-04-30  expires: 2023-04-30  usage: A
+[ unknown] (1). Polyedre &lt;polyedre@disroot.org&gt;
+
+gpg&gt; key 1
+
+sec  rsa4096/913174CACD67AE0F
+     created: 2022-04-30  expires: 2024-04-29  usage: C
+     trust: unknown       validity: unknown
+ssb* rsa4096/505199DE46ABA45C
+     created: 2022-04-30  expires: 2023-04-30  usage: S
+ssb  rsa4096/8CDCD83070A02AFB
+     created: 2022-04-30  expires: 2023-04-30  usage: E
+ssb  rsa4096/41C03C2FDB86A1EC
+     created: 2022-04-30  expires: 2023-04-30  usage: A
+[ unknown] (1). Polyedre &lt;polyedre@disroot.org&gt;
+
+gpg&gt; expire
+Changing expiration time for a subkey.
+Please specify how long the key should be valid.
+         0 = key does not expire
+      &lt;n&gt;  = key expires in n days
+      &lt;n&gt;w = key expires in n weeks
+      &lt;n&gt;m = key expires in n months
+      &lt;n&gt;y = key expires in n years
+Key is valid for? (0) 1w
+Key expires at sam. 07 mai 2022 21:32:06 CEST
+Is this correct? (y/N) y
+
+sec  rsa4096/913174CACD67AE0F
+     created: 2022-04-30  expires: 2024-04-29  usage: C
+     trust: unknown       validity: unknown
+ssb* rsa4096/505199DE46ABA45C
+     created: 2022-04-30  expires: 2022-05-07  usage: S
+ssb  rsa4096/8CDCD83070A02AFB
+     created: 2022-04-30  expires: 2023-04-30  usage: E
+ssb  rsa4096/41C03C2FDB86A1EC
+     created: 2022-04-30  expires: 2023-04-30  usage: A
+[ unknown] (1). Polyedre &lt;polyedre@disroot.org&gt;
+
+gpg&gt; save
+polyedre@machine $ gpg -K
+gpg: checking the trustdb
+gpg: no ultimately trusted keys found
+/tmp/tmp.7pQf2b7qXY/pubring.kbx
+-------------------------------
+sec   rsa4096 2022-04-30 [C] [expires: 2024-04-29]
+      054350865F0474F5D2497D69913174CACD67AE0F
+uid           [ unknown] Polyedre &lt;polyedre@disroot.org&gt;
+ssb   rsa4096 2022-04-30 [S] [expires: 2022-05-07]
+ssb   rsa4096 2022-04-30 [E] [expires: 2023-04-30]
+ssb   rsa4096 2022-04-30 [A] [expires: 2023-04-30]</code></pre>
+<p>Pour valider le changement, il suffit d'exporter à nouveau les clés secondaire et de les importer dans le trousseau du système.</p>
+<h2>conclusion</h2>
+<p>Et voilà, il reste une toute dernière étape : publier la clé publique sur un serveur de clé.</p>
+<pre><code class="lang-sh">polyedre@machine $ gpg --send-keys 054350865F0474F5D2497D69913174CACD67AE0F
+gpg: sending key 913174CACD67AE0F to hkps://keys.openpgp.org</code></pre>
+<p>L'identifiant de la clé peut être obtenu en listant les clés privées. Dans mon cas, l'auto-complétion de la commande m'a permis de selectionner la clé à publier.</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#security</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

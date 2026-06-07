@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Let&#x27;s filter Prometheus metrics exposed by Softwares — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Let&#x27;s filter Prometheus metrics exposed by Softwares</h1>
+      <div class="meta">
+        <span><b>date</b> 2023-10-19</span>
+        <span><b>read</b> 3 min</span>
+        <span><b>tags</b> #k8s #perf #prometheus</span>
+      </div>
+    </header>
+
+<p>This post discusses about the limit of Prometheus crawlers when a software exposes too much metrics, and provides a solution to limit the number of metrics exported by Softwares that cannot be modified.</p>
+<h2>Sometimes you're just crawling too much</h2>
+<p>The number of metrics exported on the <code>/metrics</code> endpoint of a Software can impact the performances of Prometheus crawlers. There is at least two ways crawlers could fail to fetch metrics for a software.</p>
+<p>The first case involve a software that is deployed with a small number of Pods, but exposes a lot of metrics. This is the case of Kube State Metrics for instance. For each Kubernetes ressource present on the cluster, Kube State Metrics will expose multiple metrics. On big Kubernetes clusters, the number of metrics could exceed 1 million metrics. This means that Prometheus crawlers need to fetch this million of lines every 20 seconds (depends on the interval configured). With one million lines, the body of the request could exceed 80MB.</p>
+<p>Here, the limitation is the time required to receive all the lines. If the duration of the HTTP request exceed the period between two crawls, the crawlers timeouts the HTTP request and starts a new one. As a consequence, you may lose your metrics.</p>
+<p>The second case involve a software that exported a reasonable number of metrics, but is deployed with a lot of Pods. Because the crawler crawl each Pod individually, each HTTP request finish quickly.</p>
+<p>In this second case, the limit could be the CPU allocated to the crawler, or any intermediate Pod that aggregates the metrics. If prometheus is not able to process all the metrics quickly enough, you may lose your metrics.</p>
+<p>The simple solution would be to throw more CPU at the problem. But let's be honest, a better solution might be to check if all the metrics exported are useful. You might save some storage space too!</p>
+<h2>Identify metrics that can do not need to be exported</h2>
+<p>In order to evaluate which metrics can be filtered, you need to:</p>
+<p> 1. know all the metrics that are exported by Pods, and the cardinality of each     metrics;  2. decide which metrics can be dropped.</p>
+<p>The easiest way to know which metrics are exported by a Pod is to send a GET HTTP request to the /metrics endpoint of the Pod. This can be achieved with <code>curl</code> and <code>kubectl port-forward</code> if you want to send the request from your laptop, or with <code>curl</code> installed inside a Pod. I will not cover how to use these tools here.</p>
+<p>You can use some shell tools to sort which metrics have the highest cardinality:</p>
+<pre><code class="lang-bash">curl https://ENDPOINT/metrics | grep -v &#x27;#&#x27; | cut -d&#x27;{&#x27; -f1 | uniq -c | sort -h</code></pre>
+<p>Ideally, you want to focus your efforts on high cardinality metrics.</p>
+<h2>Reduce the number of metrics exported</h2>
+<p>There is three possibility know:</p>
+<ol><li>You can modify the software that exports the metrics to stop exporting    useless metrics, or to reduce the cardinality of those. 2. You cannot modify the software, but there is a builtin way to stop some    metrics from being exported. 3. You're out of luck: you cannot either modify the software or modify its    configuration so that less metrics are exported.</li></ol>
+<p>The end of this post will focus on the third option.</p>
+<p>If the software is Open Source, you could patch it to remove the metrics. However, this may come as a cost, because now, you will need to maintain your patch.</p>
+<p>Instead, the solution I'm proposing is to run a HTTP proxy as a SideCar container that filters metrics exposed by the software. With this solution, you do not need to rebuild the docker image. You "just" have to modify the Pod definition.</p>
+<p>I implemented a simple HTTP proxy that targets a single HTTP endpoint, and removes all the lines that match a regular expression. One fear that I had with this solution was that this introduces some latency, because the proxy need to run the HTTP request, then serve the response with the lines filtered out. As it turns out, most of the HTTP time used to serve the HTTP request comes from the network, so as long as the proxy removes enough lines in the body response, a HTTP request to <code>/metrics</code> could be instead <strong>faster</strong>.</p>
+<p>The tool is called <a href="https://github.com/polyedre/metrics-filter">metrics-filter</a>.</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#k8s</a> <a href="../../index.html">#perf</a> <a href="../../index.html">#prometheus</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

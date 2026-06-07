@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>polyedre — notes from the stack</title>
+<meta name="description" content="A personal techy blog. Infra, scheme, weird workflows.">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="assets/avatar.svg">
+<link rel="alternate" type="application/rss+xml" title="polyedre" href="rss.xml">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+
+  <section class="intro">
+    <img class="avatar" src="assets/hello.webp" alt="polyedre avatar">
+    <div>
+      <p>Hi, I'm <span class="who">polyedre</span> — an <span class="hl">infrastructure engineer</span> who spends his time between <span class="hl">Kubernetes</span>, <span class="hl">Guix</span>, and <span class="hl">Emacs</span>. This is my personal blog.</p>
+      <p>I write down what I figure out the hard way — <span class="hl">infra at scale</span>, <span class="hl">reproducible builds</span>, <span class="hl">Emacs workflows</span> that survive contact with reality, and the occasional <span class="hl">security</span> deep-dive. Partly so I can find it again later, partly because someone else might need it too.</p>
+      <p class="dim">No tracking. No analytics. <a href="rss.xml">RSS</a> if you prefer.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">posts</div>
+    <div class="panel-body">
+      <div class="posts">
+
+    <div class="post-row">
+      <div class="date">2026-03-29</div>
+      <div class="body">
+        <h3><a href="posts/benchmarking-tramp-backends/index.html">The new TRAMP alternatives are probably not worth it -- except if you use Magit</a></h3>
+        <div class="tags-inline"><span>:emacs:</span><span>:tramp:</span><span>:perf:</span></div>
+      </div>
+      <div class="read">5m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2025-05-21</div>
+      <div class="body">
+        <h3><a href="posts/manage-guix-VM-in-openstack/index.html">Deploy and Manage a Guix VM in OpenStack: A Comprehensive Guide</a></h3>
+        <div class="tags-inline"><span>:guix:</span><span>:infra:</span></div>
+      </div>
+      <div class="read">11m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2024-09-25</div>
+      <div class="body">
+        <h3><a href="posts/why-2767-nodeports/index.html">Why Kubernetes NodePort Stops at 32767?</a></h3>
+        <div class="tags-inline"><span>:k8s:</span></div>
+      </div>
+      <div class="read">1m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2024-04-01</div>
+      <div class="body">
+        <h3><a href="posts/guix-helm-charts/index.html">Packaging and Deploying Helm Charts with Guix</a></h3>
+        <div class="tags-inline"><span>:guix:</span><span>:k8s:</span></div>
+      </div>
+      <div class="read">4m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2023-10-19</div>
+      <div class="body">
+        <h3><a href="posts/filter-metrics/index.html">Let's filter Prometheus metrics exposed by Softwares</a></h3>
+        <div class="tags-inline"><span>:k8s:</span><span>:perf:</span><span>:prometheus:</span></div>
+      </div>
+      <div class="read">3m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2023-07-15</div>
+      <div class="body">
+        <h3><a href="posts/ktx/index.html">Using multiple kubectl contexts at the same time</a></h3>
+        <div class="tags-inline"><span>:k8s:</span><span>:emacs:</span></div>
+      </div>
+      <div class="read">1m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2023-05-31</div>
+      <div class="body">
+        <h3><a href="posts/scaling-kube-state-metrics/index.html">Reduce Kube State Metrics's sample count by 45%</a></h3>
+        <div class="tags-inline"><span>:k8s:</span><span>:perf:</span></div>
+      </div>
+      <div class="read">3m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2022-12-10</div>
+      <div class="body">
+        <h3><a href="posts/dive/index.html">Identifying unused files in Docker images with Dive</a></h3>
+        <div class="tags-inline"><span>:containers:</span><span>:docker:</span></div>
+      </div>
+      <div class="read">3m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2022-04-29</div>
+      <div class="body">
+        <h3><a href="posts/openpgp_2/index.html">À la recherche du workflow GPG parfait (Partie 2)</a></h3>
+        <div class="tags-inline"><span>:security:</span></div>
+      </div>
+      <div class="read">5m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2022-03-29</div>
+      <div class="body">
+        <h3><a href="posts/openpgp_1/index.html">À la recherche du workflow GPG parfait (Partie 1)</a></h3>
+        <div class="tags-inline"><span>:security:</span></div>
+      </div>
+      <div class="read">7m</div>
+    </div>
+
+    <div class="post-row">
+      <div class="date">2022-02-12</div>
+      <div class="body">
+        <h3><a href="posts/microk8s/index.html">Microk8s, multi-usage Kubernetes</a></h3>
+        <div class="tags-inline"><span>:k8s:</span></div>
+      </div>
+      <div class="read">3m</div>
+    </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">projects</div>
+    <div class="panel-body">
+      <div class="rows">
+    <a class="row project" href="https://github.com/polyedre/guix-helm" rel="me">
+      <div class="key">github/guix-helm</div>
+      <div class="val">Helm charts generated from Guix package definitions.</div>
+    </a>
+    <a class="row project" href="https://github.com/polyedre/ktx">
+      <div class="key">github/ktx</div>
+      <div class="val">Kube-context cycling for Emacs. One key, every cluster.</div>
+    </a>
+    <a class="row project" href="https://github.com/polyedre/dive-tui">
+      <div class="key">github/dive-tui</div>
+      <div class="val">Layer-by-layer container archaeology, in a terminal UI.</div>
+    </a>
+    <a class="row project" href="https://github.com/polyedre/asciinema-svg">
+      <div class="key">github/asciinema-svg</div>
+      <div class="val">Server-side renderer for asciicast files. Static SVG, no JS.</div>
+    </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">elsewhere</div>
+    <div class="panel-body">
+      <div class="rows">
+        <a class="row" href="https://github.com/polyedre" rel="me">
+          <div class="key">github</div>
+          <div class="val mono">github.com/polyedre</div>
+        </a>
+        <a class="row" href="https://fosstodon.org/@polyedre" rel="me">
+          <div class="key">mastodon</div>
+          <div class="val mono">@polyedre@fosstodon.org</div>
+        </a>
+        <a class="row" href="mailto:me@polyed.re">
+          <div class="key">email</div>
+          <div class="val mono">me@polyed.re</div>
+        </a>
+        <div class="row">
+          <div class="key">gpg</div>
+          <div class="val mono" id="gpg-fpr">B03F D5F0 6E1A B4E8 9A88  896F 0365 E572 7135 6D3B</div>
+          <span class="ext">
+            <button type="button" class="copy" data-copy="gpg-fpr" aria-label="copy fingerprint">copy</button>
+            <a href="polyedre.asc" download>.asc</a>
+          </span>
+        </div>
+        <a class="row" href="rss.xml">
+          <div class="key">rss</div>
+          <div class="val mono">/rss.xml</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reduce Kube State Metrics&#x27;s sample count by 45% — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Reduce Kube State Metrics&#x27;s sample count by 45%</h1>
+      <div class="meta">
+        <span><b>date</b> 2023-05-31</span>
+        <span><b>read</b> 3 min</span>
+        <span><b>tags</b> #k8s #perf</span>
+      </div>
+    </header>
+
+<p><a href="https://github.com/kubernetes/kube-state-metrics">Kube State Metrics</a> is a service that listen to the Kubernetes API server and generates metrics about the state of the resources (Pods, Deployments, Namespaces...). The metrics are exported on the HTTP endpoint <code>/metrics</code> on the listening port (default 8080). They are served as plaintext and can be crawled directly by Prometheus.</p>
+<p>For each Kubernetes resource, some metrics are available. For Pods for instance, the metrics listed in <a href="https://github.com/kubernetes/kube-state-metrics/blob/main/docs/pod-metrics.md">this file</a> are available. This includes <code>kube_pod_info</code> and <code>kube_pod_status_phase</code>.</p>
+<p>Each line represent a metric in the output of a request to the HTTP endpoint. The more Kubernetes resources there are, the more metrics there are, and the larger the endpoint crawl result. With big Kubernetes clusters, the HTTP endpoint can return about one million lines of metrics.</p>
+<p>This is a problem because Prometheus needs to crawl the endpoint regularly, and 20 seconds is a good frequency. But when the endpoint is too large, the HTTP request can take many seconds. Before the time needed to crawl the endpoint exceeds 20 seconds, it's time to clean up the metrics exported by Kube State Metrics.</p>
+<p>Fortunately, Kube State Metrics lets you limit the number of metrics exported in two different ways.</p>
+<h2>Choose the Kubernetes resource to export</h2>
+<p>Kube State Metrics allows you to enable or disable the export of metrics associated with each Kubernetes resource type. This is configured in the Helm chart with the <code>collectors</code> variable:</p>
+<pre><code class="lang-yaml">collectors:
+  - certificatesigningrequests
+  - configmaps
+  - cronjobs
+  - daemonsets
+  - deployments
+  - endpoints
+  - horizontalpodautoscalers
+  - ingresses
+  - jobs
+  - leases
+  - pods
+[skipped]</code></pre>
+<p>This is by far the easiest way to reduce the number of metrics.</p>
+<h2>Block useless metrics from being exported</h2>
+<p>But what if I'm not interested in <code>kube_pod_info</code> but use <code>kube_pod_status_phase</code> ? It is not possible to disable the collector for the Pods because otherwise <code>kube_pod_status_phase</code> would not be exported.</p>
+<p>To manage metrics individually, Kube State Metrics allows to block some metrics explicitely. This is configurable in the Helm Chart with the <code>metricDenylist</code> variable:</p>
+<pre><code class="lang-yaml">metricDenyList:
+  - kube_*_info
+  - kube_pod_status_qos_class</code></pre>
+<h2>Identifying unused metrics</h2>
+<p>Identifying the unused metrics is the boring part of the process. The ideal would be to extract the list of all metrics used by the Grafana Dashboards. In practice, it depends of the organization.</p>
+<p>On the clusters I worked with, I was able to identify about half of the metrics as useless. After rolling out the Helm Chart with the new values, the CPU and memory usage dropped by about 20% and the size of the HTTP response has been reduced by about 45%.</p>
+<p>The time to crawl the HTTP endpoint became far more manageable. The users can continue to deploy new Kubernetes resources without worries.</p>
+<h2>An alternative to reduce the size of a crawl</h2>
+<p>There is an other approach to reduce the size of a crawl and avoid the 20 seconds limit. Kube State Metrics can scale horizontally by sharding the metrics between the different Pods.</p>
+<p>When the sharding is enabled in the Helm Chart, the Deployment is replaced by a StatefulSet, and the Service by a Headless Service. Each pod is started with the two flags <code>--shard &lt;id&gt;</code> and <code>--total-shards &lt;count&gt;</code>.</p>
+<p>This approach could have been an option if removing a lot of unused metrics from the export would not have been possible.</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#k8s</a> <a href="../../index.html">#perf</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

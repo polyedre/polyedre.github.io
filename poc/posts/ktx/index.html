@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Using multiple kubectl contexts at the same time — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Using multiple kubectl contexts at the same time</h1>
+      <div class="meta">
+        <span><b>date</b> 2023-07-15</span>
+        <span><b>read</b> 1 min</span>
+        <span><b>tags</b> #k8s #emacs</span>
+      </div>
+    </header>
+
+<p>Kubernetes clusters rarely come alone. If you have access to at least one, in no time you'll need to switch your kubectl context to access other clusters.</p>
+<p>But what if you need to access two clusters <em>simultaneously</em>?</p>
+<p>This is a problem I had multiple times per week (even per day) for a few months. When comparing two Kubernetes clusters, if often had to switch the kubectl context between each command.</p>
+<pre><code class="lang-sh"><span class="tok-prompt">$</span> # Some pod cannot start on clusterA, let&#x27;s compare the quota allocated on clusterB
+<span class="tok-prompt">$</span> kubetctx clusterA
+<span class="tok-prompt">$</span> kubectl get quota
+<span class="tok-prompt">$</span> kubectx clusterB
+<span class="tok-prompt">$</span> kubectl get quota
+<span class="tok-prompt">$</span> # No difference constated, let&#x27;s check if the number of replica is different
+<span class="tok-prompt">$</span> kubetctx clusterA
+<span class="tok-prompt">$</span> kubectl get deploy
+<span class="tok-prompt">$</span> kubectx clusterB
+<span class="tok-prompt">$</span> kubectl get deploy
+<span class="tok-prompt">$</span> # Etc</code></pre>
+<p>To reduce the number of context switching, I need to be able to start two terminals: one by kubectl context.</p>
+<p>Here is my quick solution (I use ZSH, so the autocompletion will not work if you use bash or fish):</p>
+<pre><code class="lang-sh">ktx-init() {
+  current_context=$(cat ~/.kube/config | yq &#x27;.current-context&#x27;)
+
+  for context in $(cat ~/.kube/config | yq &#x27;.contexts[].name&#x27;); do
+    KUBECONFIG=~/.kube/config kubectx $context
+
+    cp ~/.kube/config /tmp/k8s_context_$context
+  done
+
+  KUBECONFIG=~/.kube/config kubectx $current_context
+}
+
+ktx() {
+  export KUBECONFIG=/tmp/k8s_context_$1
+}
+
+_ktx() {
+  compadd &quot;$@&quot; $(ls /tmp | grep k8s_context | sed &#x27;s/k8s_context_//&#x27;)
+}
+
+compdef _ktx ktx</code></pre>
+<p>After sourcing your ZSH config again, run the <code>ktx-init</code> command. It reads all the context stored in your file <code>~/.kube/config</code> and create a kubeconfig file for each context.</p>
+<p>After, you can just switch context in each of the terminals with <code>ktx &lt;CONTEXT-NAME&gt;</code>.</p>
+<p>I did not expect this improvement to my workflow to be this easy. If I had known I would have written this function months ago! </p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#k8s</a> <a href="../../index.html">#emacs</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

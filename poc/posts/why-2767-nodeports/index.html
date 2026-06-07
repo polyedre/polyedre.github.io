@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why Kubernetes NodePort Stops at 32767? — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Why Kubernetes NodePort Stops at 32767?</h1>
+      <div class="meta">
+        <span><b>date</b> 2024-09-25</span>
+        <span><b>read</b> 1 min</span>
+        <span><b>tags</b> #k8s</span>
+      </div>
+    </header>
+
+<p>In Kubernetes, NodePort allows external traffic to access services via a specific port range, typically 30000-32767. But while starting at port 30000 makes sense because Kubernetes does not want to conflict with other ports of the host, I wondered why Kubernetes supports only 2767 NodePorts by default.</p>
+<p>After digging a little bit, I found that the value 32767 represents the maximum for a 15-bit unsigned integer. Limiting the range to 32767 was therefore chosen to ensure the compatibility with systems that may treat ports as signed integers. This prevents potential issues in networking software.</p>
+<p>Kubernetes offers flexibility in adjusting the NodePort range. Administrators can modify the <code>service-node-port-range</code> flag to expand the range if needed. However, expanding the range requires careful network configuration, including updating firewall rules to allow traffic through additional ports however, be careful!</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#k8s</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

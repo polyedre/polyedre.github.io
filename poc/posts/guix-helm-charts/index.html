@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Packaging and Deploying Helm Charts with Guix — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Packaging and Deploying Helm Charts with Guix</h1>
+      <div class="meta">
+        <span><b>date</b> 2024-04-01</span>
+        <span><b>read</b> 4 min</span>
+        <span><b>tags</b> #guix #k8s</span>
+      </div>
+    </header>
+
+<p>My daily job requires me to maintain multiple Helm Charts released to multiple Kubernetes Clusters.</p>
+<p>I've encountered mutiple limitations with Helm.</p>
+<p>The Go templating engine sometimes is not enough. The only functions available to Chart Helm maintainers have been added explicitely. You cannot add custom ones easily.</p>
+<p>The values.yaml file is great at reducing the interface between the Helm Chart maintainer and the users, but when an option is missing, the only ways are to fork or contribute a pull request, and this lead to complex values.yaml Chart like those of bitnami (1427 lines): https://github.com/bitnami/charts/blob/main/bitnami/argo-workflows/values.yaml.</p>
+<p>I recently watched a lot of talk from the Kubecon 2024 that happened at Paris, and I've been following the two Linux distributions Nix and Guix for a while (I mostly hoped to be able to generate minimalist Docker containers, but we are not there yet). As a result, my Youtube history led to a talk by Vladimir "farcaller" Pouzanov named <a href="https://www.youtube.com/watch?v=SEA1Qm8K4gY">NixCon2023 Nix and Kubernetes: Deployments Done Right</a>.</p>
+<p>He implemented a Nix Pkgs repository containing only Helm Charts. This allowed him to override Helm Chart configuration and resources without forking the Helm Chart. And finally, he was able to deploy all the Kubernetes YAML definitions to mutiple Kubernetes clusters using Argo-CD.</p>
+<p>As a proud daily Emacs user, between Nix and Guix, my heart sways more towards Guix. I'm mostly interested in the fact that Guix is a complete programming language, while Nix is a DSL.</p>
+<p>That's why I've been working on a port of this talk to Guix!</p>
+<p>See https://github.com/polyedre/guix-helm-charts.</p>
+<p>After a lot of trial an error, I was finally able to create a Helm Chart package that contains the raw Helm Chart:</p>
+<pre><code class="lang-scheme">(<span class="tok-kw">define-public</span> nginx-15.14.0
+  (<span class="tok-kw">package</span>
+   (name <span class="tok-str">&quot;nginx&quot;</span>)
+   (version <span class="tok-str">&quot;15.14.0&quot;</span>)
+   (source (origin
+            (method url-fetch)
+            (uri <span class="tok-str">&quot;https://charts.bitnami.com/bitnami/nginx-15.14.0.tgz&quot;</span>)
+            (sha256 <span class="tok-num">#f</span>)))
+   (build-system copy-build-system)
+   (home-page <span class="tok-str">&quot;https://bitnami.com&quot;</span>)
+   (synopsis <span class="tok-str">&quot;NGINX Open Source is a web server that can be also used as a reverse proxy, load balancer, and HTTP cache. Recommended for high-demanding sites due to its ability to provide faster content.&quot;</span>)
+   (description <span class="tok-str">&quot;NGINX Open Source is a web server that can be also used as a reverse proxy, load balancer, and HTTP cache. Recommended for high-demanding sites due to its ability to provide faster content.&quot;</span>)
+   (license <span class="tok-num">#f</span>)))</code></pre>
+<p>With that, I could create a Helm Release from the Helm Chart by specifying a name to the release, a Namespace and some custom values:</p>
+<pre><code class="lang-scheme"><span class="tok-cm">; This function generates a YAML file tree containing the definitions of the</span>
+<span class="tok-cm">; resources that would be applied when deploying the chart `chart` under the</span>
+<span class="tok-cm">; release name `name`, to the Kubernetes Namespace `namespace`, with the values</span>
+<span class="tok-cm">; `values`. The value argument must be a json object.</span>
+(<span class="tok-kw">define</span> (helm-release name chart namespace values)
+    (with-imported-modules &#x27;((guix build utils))
+      (computed-file name
+         #~(<span class="tok-kw">begin</span>
+           (<span class="tok-kw">use-modules</span> (guix build utils))
+           (mkdir-p #$output)
+           (system (format <span class="tok-num">#f</span> <span class="tok-str">&quot;~a template ~a ~a --output-dir ~a --release-name --values ~a&quot;</span>
+                    (string-append #$helm <span class="tok-str">&quot;/bin/helm&quot;</span>)
+                    #$name
+                    #$chart
+                    #$output
+                    #$(plain-file <span class="tok-str">&quot;values.json&quot;</span> (scm-&gt;json-string values))))))))</code></pre>
+<p>This function creates a Helm Release:</p>
+<pre><code class="lang-scheme">(helm-release <span class="tok-str">&quot;my-custom-release-name&quot;</span> ilum-jupyter-6.1.0 <span class="tok-str">&quot;default&quot;</span>
+                &#x27;((ingress . ((enabled . <span class="tok-num">#t</span>)
+                              (host . <span class="tok-str">&quot;example.com&quot;</span>)))</code></pre>
+<p>To deploy the Helm release to a Kubernetes cluster, I only have to use <code>kubectl apply</code>:</p>
+<pre><code class="lang-sh">kubectl apply -f $(guix build -f example.scm)</code></pre>
+<p>Multiple Helm Charts can be released together with the use of Guix's <code>directory-union</code> method:</p>
+<pre><code class="lang-sh">(directory-union &quot;helm-releases&quot;
+  (list
+    (helm-release &quot;my-custom-release-name&quot; ilum-jupyter-6.1.0 &quot;default&quot;
+                  &#x27;((ingress . ((enabled . #t)
+                                (host . &quot;example.com&quot;)))
+                    (tolerations . #(((operator . &quot;Exists&quot;))))))
+    (helm-release &quot;my-second&quot; ilum-jupyter-6.0.0 &quot;test&quot; &#x27;())
+    (helm-release &quot;another&quot; nginx-15.14.0 &quot;kubernetes-tools&quot; &#x27;())))</code></pre>
+<p>Using Guix has not been easy. I have some experience with emacs-lisp, so I was not afraid of the parenthesis or the functional programming paradigm. I mostly struggled to understand my errors because Guile does not always point to the failing line (probably because of the functional programming paradigm).</p>
+<p>After a lot of struggle, I discovered <a href="https://guix.gnu.org/manual/en/html_node/The-Perfect-Setup.html">The Perfect Setup</a> in Guix's documentation. This is a page describing how to configure Emacs to develop with Guix. I was able to configure Geiser in Emacs, but something must be wrong about by load-path because the Geiser REPL was not able to import Guix modules.</p>
+<p>Edit: Thanks to @Z572@mastodon.social for pointing out that when working on Guile for Guix in Emacs, I can use command <code>guix repl</code> instead of <code>guile</code>. https://mastodon.social/@Z572/112195758829383364</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#guix</a> <a href="../../index.html">#k8s</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

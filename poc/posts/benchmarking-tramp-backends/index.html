@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The new TRAMP alternatives are probably not worth it -- except if you use Magit — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>The new TRAMP alternatives are probably not worth it -- except if you use Magit</h1>
+      <div class="meta">
+        <span><b>date</b> 2026-03-29</span>
+        <span><b>read</b> 5 min</span>
+        <span><b>tags</b> #emacs #tramp #perf</span>
+      </div>
+    </header>
+
+<p>Every few months, someone posts about how painfully slow TRAMP is. And honestly, they're not wrong (opening a remote file and waiting for that modeline to stop spinning is one of those small frustrations that add up).</p>
+<p>So when two new projects showed up promising to fix this, I got curious. <a href="https://github.com/ArthurHeymans/emacs-tramp-rpc">tramp-rpc</a> uses a Rust server speaking MessagePack-RPC, <a href="https://github.com/muirdm/flit.el">flit.el</a> uses a Go server with JSON-RPC. Both claim significant speedups. I decided to actually measure it.</p>
+<p>The short answer surprised me. For basic file operations, the improvements are modest (ControlMaster already does the heavy lifting). But then I ran actual <code>magit-status</code> on a real codebase and, well, keep reading.</p>
+<h2>The thing nobody talks about: ControlMaster</h2>
+<p>Here's what most "TRAMP is slow" discussions miss. Stock TRAMP already uses SSH ControlMaster, which keeps a single persistent connection open and multiplexes all commands through it. Once your first SSH handshake completes (~600ms), every subsequent command reuses that socket with only ~50ms overhead.</p>
+<p>So the real question isn't "SSH vs binary protocol." It's: "is 50ms of shell-command overhead per operation enough to justify deploying a server binary on every remote host?"</p>
+<p>I ran the benchmarks to find out. The remote host is a Debian 12 box with ~50ms SSH round-trips (a pretty typical setup). I tested read/write (with and without cache) and git/magit operations.</p>
+<h2>Cold cache: the first-access story</h2>
+<p>These numbers represent the worst case: no cached data, every operation hits the remote.</p>
+<table><thead><tr><th>Test</th><th>RPC</th><th>flit</th><th>sshx</th></tr></thead><tbody><tr><td>connection-setup</td><td>614 ms</td><td>653 ms</td><td>1.65 s</td></tr><tr><td>file-exists</td><td>16.2 ms</td><td>15.0 ms</td><td>45.0 ms</td></tr><tr><td>file-attributes</td><td>14.5 ms</td><td>14.6 ms</td><td>37.6 ms</td></tr><tr><td>file-read (1KB)</td><td>16.2 ms</td><td>0.3 ms</td><td>42.6 ms</td></tr><tr><td>file-read (10MB)</td><td>74.0 ms</td><td>808 ms</td><td>191 ms</td></tr><tr><td>file-write (1KB)</td><td>243 ms</td><td>16.0 ms</td><td>246 ms</td></tr><tr><td>directory-files</td><td>46.9 ms</td><td>15.9 ms</td><td>43.1 ms</td></tr><tr><td>dir-files-and-attrs</td><td>17.9 ms</td><td>33.1 ms</td><td>63.3 ms</td></tr><tr><td>process-file (ls)</td><td>17.4 ms</td><td>66.7 ms</td><td>20.9 ms</td></tr><tr><td>copy-file</td><td>129 ms</td><td>31.1 ms</td><td>209 ms</td></tr><tr><td>multi-stat (10x)</td><td>155 ms</td><td>155 ms</td><td>220 ms</td></tr></tbody></table>
+<p>The connection setup improvement is real (600ms vs 1.6s). You actually feel that one. Metadata operations (<code>file-exists</code>, <code>file-attributes</code>) are about 2-3x faster.</p>
+<p>But look closer and things get weird. RPC is basically the same speed as stock TRAMP for file writes (243ms vs 246ms). flit is <em>3x slower</em> than stock TRAMP for running remote commands (67ms vs 21ms for a simple <code>ls</code>). And flit absolutely chokes on large file reads (808ms for a 10MB file vs 191ms for stock TRAMP).</p>
+<p>Neither project is a clean win across the board. They each have operations where they're actually worse than the thing they're trying to replace.</p>
+<h2>Warm cache: no performance benefits</h2>
+<table><thead><tr><th>Test</th><th>RPC</th><th>flit</th><th>sshx</th></tr></thead><tbody><tr><td>cached-file-exists</td><td>571 us</td><td>132 us</td><td>228 us</td></tr><tr><td>cached-file-attrs</td><td>323 us</td><td>145 us</td><td>214 us</td></tr><tr><td>cached-multi-stat (10x)</td><td>1.50 ms</td><td>1.70 ms</td><td>2.15 ms</td></tr><tr><td>cached-dir-files</td><td>1.22 ms</td><td>330 us</td><td>520 us</td></tr></tbody></table>
+<p>Once data is cached, all three backends return in microseconds. At this scale, the backend is irrelevant (you're measuring Emacs hash table lookups). And in real usage, a lot of your TRAMP interactions are hitting warm caches (reopening buffers, navigating directories you've already listed, etc.).</p>
+<h2>Synthetic git benchmarks: mildly interesting</h2>
+<p>I also tested individual git commands through <code>process-file</code>, simulating what magit does under the hood.</p>
+<table><thead><tr><th>Test</th><th>RPC</th><th>flit</th><th>sshx</th></tr></thead><tbody><tr><td>git rev-parse</td><td>16.3 ms</td><td>66.1 ms</td><td>26.7 ms</td></tr><tr><td>git status</td><td>16.7 ms</td><td>66.7 ms</td><td>20.5 ms</td></tr><tr><td>git log (20 commits)</td><td>16.3 ms</td><td>67.5 ms</td><td>21.9 ms</td></tr><tr><td>git diff --stat</td><td>15.9 ms</td><td>66.5 ms</td><td>19.9 ms</td></tr><tr><td>git ls-files</td><td>16.3 ms</td><td>66.6 ms</td><td>21.5 ms</td></tr><tr><td>git branch -a</td><td>15.7 ms</td><td>68.0 ms</td><td>20.6 ms</td></tr></tbody></table>
+<p>RPC is consistently the fastest here at ~16ms per command. Stock TRAMP is close at ~20ms. flit is surprisingly slow at ~67ms (actually 3x slower than stock TRAMP for running remote commands).</p>
+<p>Looking at these numbers, I almost concluded that the RPC approach wasn't worth the hassle. Sure, 16ms is faster than 20ms, but who cares about 4ms?</p>
+<p>Then I ran actual <code>magit-status</code>.</p>
+<h2>Real magit-status: okay, I was wrong</h2>
+<p>All the benchmarks above test individual operations in isolation. But that's not how magit works. When you run <code>magit-status</code>, it fires off dozens of git commands sequentially (rev-parse, status, log, diff, stash, branch info, and more). Each one is a separate round-trip through TRAMP.</p>
+<p>So I ran real <code>magit-status</code> on an actual codebase (~750 commits, active development) through <code>emacsclient</code> and timed it end-to-end. Cold connection, no caches, the full experience.</p>
+<table><thead><tr><th></th><th>sshx</th><th>tramp-rpc</th><th>speedup</th></tr></thead><tbody><tr><td><strong>magit-status</strong></td><td><strong>113 s</strong></td><td><strong>10.1 s</strong></td><td><strong>11.2x</strong></td></tr></tbody></table>
+<p>Yeah. Nearly two minutes vs ten seconds. I ran it three times each to make sure I wasn't imagining things:</p>
+<ul><li><strong>sshx</strong>: 113.2s, 115.0s, 112.8s</li><li><strong>tramp-rpc</strong>: 10.3s, 9.9s, 10.1s</li></ul>
+<p>This is a completely different story from the synthetic benchmarks. The per-command improvement was only 4ms (16ms vs 20ms), but tramp-rpc doesn't actually run those commands one at a time. Its magit integration batches ~60 git commands into a single round-trip through a <code>commands.run_parallel</code> RPC call. Instead of 60 sequential round-trips at 20ms each (= 1.2s just in network overhead), it sends everything at once and gets all the results back in one go.</p>
+<p>On top of that, tramp-rpc caches the results and serves subsequent magit requests from that prefetched data, so the file-exists and file-attributes calls that magit makes between git commands also avoid round-trips.</p>
+<p>The 4ms-per-command improvement didn't matter. The batching did. And the synthetic benchmarks completely missed it.</p>
+<h2>So, is it worth it?</h2>
+<p>For basic file operations (opening files, listing directories, reading and writing), probably not. ControlMaster already makes stock TRAMP fast enough, and the RPC backends don't improve things dramatically for these use cases.</p>
+<p>But if you use magit on remote repositories, tramp-rpc is transformative. Going from 2 minutes to 10 seconds for <code>magit-status</code> isn't a micro-optimization (it's the difference between "magit is unusable over TRAMP" and "magit works fine"). That alone might justify deploying a server binary.</p>
+<p>flit is harder to recommend right now. It's fast for file writes and copies, but its <code>process-file</code> performance makes git operations 3x slower than stock TRAMP. And since it's a complete TRAMP replacement (not a backend), it doesn't integrate with existing TRAMP configuration.</p>
+<p>Stock TRAMP isn't glamorous. For most file operations with ControlMaster, it's honestly fine. But the moment you open magit on a remote repo, you'll understand why people are building these alternatives.</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#emacs</a> <a href="../../index.html">#tramp</a> <a href="../../index.html">#perf</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>

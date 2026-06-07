@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deploy and Manage a Guix VM in OpenStack: A Comprehensive Guide — polyedre</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>Deploy and Manage a Guix VM in OpenStack: A Comprehensive Guide</h1>
+      <div class="meta">
+        <span><b>date</b> 2025-05-21</span>
+        <span><b>read</b> 11 min</span>
+        <span><b>tags</b> #guix #infra</span>
+      </div>
+    </header>
+
+<h2>Introduction</h2>
+<p>It's been a few months since I started using Guix as the operating system on my personal laptop, and I've been continuously impressed by its unique approach to system management. Unlike traditional package managers, Guix offers a fully declarative, functional approach to system configuration. This means that your entire system—from packages to services to system parameters—can be defined in code and reproducibly deployed.</p>
+<p>What makes Guix particularly powerful is its use of Guile Scheme as the configuration language, offering the full expressiveness of a proper programming language rather than a limited DSL. The ability to treat your system configuration as code, with all the benefits of version control, reproducibility, and atomicity, sets Guix apart from other Linux distributions.</p>
+<p>After becoming more comfortable with Guile as a programming language, I decided to extend my Guix experience to the cloud by deploying a virtual machine in OpenStack (through OVHcloud's public cloud offering) and managing it with <code>guix deploy</code>. This post documents my experience and provides a step-by-step guide to help others do the same.</p>
+<h2>Prerequisites</h2>
+<p>Before we begin, you'll need:</p>
+<ul><li>A working Guix System installation (for building the image)</li><li>Basic familiarity with Guile Scheme</li><li>An OpenStack account (I'm using OVHcloud)</li><li>OpenStack CLI tools installed</li><li>SSH key pair for secure access</li></ul>
+<p>If you're new to Guix, I recommend first spending some time with the <a href="https://guix.gnu.org/manual/en/html_node/index.html">official manual</a> to understand the basic concepts.</p>
+<h2>Building the QCow2 Image Locally</h2>
+<p>Creating a QCow2 image with Guix is surprisingly straightforward—comparable to writing a Dockerfile for creating a container image. The process begins with defining an <a href="https://guix.gnu.org/manual/en/html_node/operating_002dsystem-Reference.html">operating-system</a> configuration.</p>
+<p>Here's the configuration I used:</p>
+<pre><code class="lang-scheme"><span class="tok-cm">;; image.scm</span>
+(<span class="tok-kw">use-modules</span> (gnu)
+             (nongnu <span class="tok-kw">packages</span> linux)
+             (guix <span class="tok-kw">packages</span>)
+             (guix build-system copy))
+
+(use-service-modules networking ssh web)
+(use-package-modules bootloaders ssh web version-control)
+
+(<span class="tok-kw">operating-system</span>
+  (kernel linux)
+  (firmware (<span class="tok-kw">list</span> linux-firmware))
+  (host-name <span class="tok-str">&quot;guix-1&quot;</span>)
+  (locale <span class="tok-str">&quot;en_US.utf8&quot;</span>)
+  (timezone <span class="tok-str">&quot;Europe/Paris&quot;</span>)
+  (keyboard-layout (keyboard-layout <span class="tok-str">&quot;fr&quot;</span>))
+
+  (bootloader (bootloader-configuration
+               (bootloader grub-bootloader)
+               (target <span class="tok-str">&quot;/dev/vda&quot;</span>)
+               (terminal-outputs &#x27;(console))))
+  (file-systems (<span class="tok-kw">cons</span> (file-system
+                        (mount-point <span class="tok-str">&quot;/&quot;</span>)
+                        (device <span class="tok-str">&quot;/dev/vda1&quot;</span>)
+                        (type <span class="tok-str">&quot;ext4&quot;</span>))
+                      %base-file-systems))
+  (<span class="tok-kw">services</span>
+   (append
+    (<span class="tok-kw">list</span>
+     (<span class="tok-kw">service</span> dhcp-client-service-type)
+     (<span class="tok-kw">service</span> openssh-service-type
+              (openssh-configuration
+               (openssh openssh-sans-x)
+               (permit-root-login <span class="tok-num">#t</span>)
+               (password-authentication? <span class="tok-num">#f</span>)  <span class="tok-cm">;; More secure: SSH keys only</span>
+               (authorized-keys
+                <span class="tok-cm">;; Authorize our SSH key</span>
+                `((<span class="tok-str">&quot;root&quot;</span> ,(local-file <span class="tok-str">&quot;/home/polyedre/.ssh/id_rsa.pub&quot;</span>))
+                  (<span class="tok-str">&quot;polyedre&quot;</span> ,(local-file <span class="tok-str">&quot;/home/polyedre/.ssh/id_rsa.pub&quot;</span>)))))))
+    (modify-services %base-services
+      (guix-service-type config =&gt;
+                         (guix-configuration
+                          (inherit config)
+                          (authorized-keys (append (<span class="tok-kw">list</span> (local-file <span class="tok-str">&quot;/etc/guix/signing-key.pub&quot;</span>)) %default-authorized-guix-keys))))))))</code></pre>
+<p>This file declares an operating system that:</p>
+<ul><li>Uses the Linux kernel and additional non-free firmware drivers</li><li>Sets up basic system parameters (hostname, locale, timezone, keyboard layout)</li><li>Configures GRUB for the virtual device</li><li>Sets up the root filesystem on <code>/dev/vda1</code></li><li>Enables two critical services:</li></ul>
+<p>  - A DHCP client to get the IP automatically   - An OpenSSH daemon that authorizes connections to the root user with the public key from my local laptop</p>
+<p>With this configuration ready, building the image is as simple as:</p>
+<pre><code class="lang-bash">guix system image --root=guix-result --image-type=qcow2 image.scm</code></pre>
+<p>The <code>--root</code> flag creates a symlink named <code>guix-result</code> that points to the generated artifact.</p>
+<p>Since <code>guix-result</code> is a read-only artifact, you'll need to copy it to a writable location if you want to test it locally:</p>
+<pre><code class="lang-bash">cp guix-result guix.qcow2</code></pre>
+<p>You can then start the virtual machine using QEMU:</p>
+<pre><code class="lang-bash">guix shell qemu -- sudo qemu-system-x86_64 \
+  -nic user,model=virtio-net-pci \
+  -enable-kvm \
+  -m 2048 \
+  -device virtio-blk,drive=guix-demo \
+  -drive if=none,file=guix.qcow2,id=guix-demo</code></pre>
+<h2>Uploading the Image and Starting a VM</h2>
+<p>To work with OpenStack, you'll first need to install the CLI tools:</p>
+<pre><code class="lang-bash">pip install python-openstackclient</code></pre>
+<p>After configuring your OpenStack credentials (typically by sourcing an environment file provided by your cloud provider), you can upload the image:</p>
+<pre><code class="lang-bash">openstack image create \
+  --progress \
+  --disk-format qcow2 \
+  --container-format bare \
+  --file guix-result \
+  --property hypervisor_type=kvm \
+  --property os_type=linux \
+  --property os_admin_user=root \
+  --property os_distro=guixsystem \
+  --property os_version=unknown \
+  guix</code></pre>
+<p>Now you can launch a VM from this image. The following command creates a VM named <code>guix-1</code> with 8GB of memory, connected to the <code>Ext-Net</code> network (which provides public IPs in OVHcloud's OpenStack):</p>
+<pre><code class="lang-bash">openstack server create \
+  --image guix \
+  --network Ext-Net \
+  --flavor b3-8 \
+  --key-name laptop \
+  guix-1</code></pre>
+<p>After a minute or two, you can check the status and IP address of your VM:</p>
+<pre><code class="lang-bash"><span class="tok-prompt">$</span> openstack server list
++--------------------------------------+--------+--------+--------------------------------------------------+-------+--------+
+| ID                                   | Name   | Status | Networks                                         | Image | Flavor |
++--------------------------------------+--------+--------+--------------------------------------------------+-------+--------+
+| af308c4e-8064-44c3-8ced-ed7c112478eb | guix-1 | ACTIVE | Ext-Net=2001:41d0:304:300::627d, 217.182.210.193 | guix  | b3-8   |
++--------------------------------------+--------+--------+--------------------------------------------------+-------+--------+</code></pre>
+<p>And connect to it:</p>
+<pre><code class="lang-bash"><span class="tok-prompt">$</span> ssh root@217.182.210.193
+Last login: Fri May 16 17:50:33 2025 from 81.65.157.5
+root@guix-1 ~#</code></pre>
+<h2>Cloud-Init Integration</h2>
+<p>One limitation of our initial image is the lack of cloud-init, which means features like automatic disk resizing don't work. Let's address this by integrating cloud-init with our Guix system.</p>
+<p>First, update the <code>image.scm</code> file to include cloud-init:</p>
+<pre><code class="lang-scheme"><span class="tok-cm">;; Updated image.scm with cloud-init</span>
+(<span class="tok-kw">use-modules</span> (gnu)
+             (nongnu <span class="tok-kw">packages</span> linux)
+             (gnu <span class="tok-kw">packages</span> cloud)
+             (guix <span class="tok-kw">packages</span>)
+             (guix build-system copy))
+
+(use-service-modules networking ssh web cloud)  <span class="tok-cm">;; Added cloud</span>
+(use-package-modules bootloaders ssh web version-control)
+
+(<span class="tok-kw">operating-system</span>
+  <span class="tok-cm">;; Previous configuration...</span>
+  
+  (<span class="tok-kw">services</span>
+   (append
+    (<span class="tok-kw">list</span>
+     (<span class="tok-kw">service</span> dhcp-client-service-type)
+     (<span class="tok-kw">service</span> openssh-service-type
+              (openssh-configuration
+               (openssh openssh-sans-x)
+               (permit-root-login <span class="tok-num">#t</span>)
+               (password-authentication? <span class="tok-num">#f</span>)
+               (authorized-keys
+                `((<span class="tok-str">&quot;root&quot;</span> ,(local-file <span class="tok-str">&quot;/home/polyedre/.ssh/id_rsa.pub&quot;</span>))
+                  (<span class="tok-str">&quot;polyedre&quot;</span> ,(local-file <span class="tok-str">&quot;/home/polyedre/.ssh/id_rsa.pub&quot;</span>))))))
+     <span class="tok-cm">;; Add cloud-init service</span>
+     (<span class="tok-kw">service</span> cloud-init-service-type
+              (cloud-init-configuration
+               (datasources &#x27;(<span class="tok-str">&quot;ConfigDrive&quot;</span> <span class="tok-str">&quot;OpenStack&quot;</span> <span class="tok-str">&quot;NoCloud&quot;</span>)))))
+    <span class="tok-cm">;; Rest of configuration...</span>
+    )))</code></pre>
+<p>With cloud-init integrated, your VM will now handle cloud-specific tasks automatically, including:</p>
+<ul><li>Resizing the root partition to use all available space</li><li>Setting the hostname based on cloud metadata</li><li>Configuring networking based on cloud metadata</li><li>Handling SSH keys from the cloud provider</li></ul>
+<p>Build the updated image and upload it to OpenStack following the same steps as before.</p>
+<h2>Managing the VM with <code>guix deploy</code></h2>
+<p>One of Guix's most powerful features is <code>guix deploy</code>, which allows you to manage remote systems using the same declarative approach used for local system configuration. This provides a consistent experience across all your machines and simplifies ongoing maintenance.</p>
+<p>To use <code>guix deploy</code>, create a deployment configuration file that includes your target machine:</p>
+<pre><code class="lang-scheme"><span class="tok-cm">;; deploy.scm</span>
+(use-service-modules networking ssh)
+(use-package-modules bootloaders ssh)
+
+(<span class="tok-kw">define</span> os (load <span class="tok-str">&quot;image.scm&quot;</span>))
+
+(<span class="tok-kw">list</span> (machine
+       (<span class="tok-kw">operating-system</span> os)
+       (environment managed-host-environment-type)
+       (configuration (machine-ssh-configuration
+                       (host-name <span class="tok-str">&quot;217.182.210.193&quot;</span>)
+                       (system <span class="tok-str">&quot;x86_64-linux&quot;</span>)
+                       (user <span class="tok-str">&quot;root&quot;</span>)
+                       (host-key <span class="tok-num">#f</span>)
+                       (port <span class="tok-num">22</span>)))))</code></pre>
+<p>This file defines a single machine managed through SSH.</p>
+<p>To apply your configuration to the remote machine, simply run:</p>
+<pre><code class="lang-bash">guix deploy deploy.scm</code></pre>
+<p>By default, Guix will build all required packages and system components locally, then transfer them to the server and activate the new configuration.</p>
+<h3>Extending Your Configuration</h3>
+<p>Now let's enhance our system by adding a user account, installing additional packages, and setting up a web server:</p>
+<pre><code class="lang-scheme"><span class="tok-cm">;; Updated image.scm with additional configuration</span>
+(<span class="tok-kw">operating-system</span>
+  <span class="tok-cm">;; Previous configuration...</span>
+
+  <span class="tok-cm">;; Add a non-root user</span>
+  (users (cons* (user-account
+                 (name <span class="tok-str">&quot;polyedre&quot;</span>)
+                 (comment <span class="tok-str">&quot;Polyedre&quot;</span>)
+                 (group <span class="tok-str">&quot;users&quot;</span>)
+                 (home-directory <span class="tok-str">&quot;/home/polyedre&quot;</span>)
+                 (supplementary-groups &#x27;(<span class="tok-str">&quot;wheel&quot;</span> <span class="tok-str">&quot;netdev&quot;</span> <span class="tok-str">&quot;audio&quot;</span> <span class="tok-str">&quot;video&quot;</span>)))
+                %base-user-accounts))
+
+  <span class="tok-cm">;; Add some useful packages</span>
+  (<span class="tok-kw">packages</span> (cons* git
+                   curl
+                   htop
+                   %base-packages))
+
+  <span class="tok-cm">;; Services configuration </span>
+  (<span class="tok-kw">services</span>
+   (append
+    (<span class="tok-kw">list</span>
+     (<span class="tok-kw">service</span> dhcp-client-service-type)
+     (<span class="tok-kw">service</span> openssh-service-type
+              (openssh-configuration
+               (openssh openssh-sans-x)
+               (permit-root-login <span class="tok-num">#f</span>)  <span class="tok-cm">;; Disable root login for security</span>
+               (password-authentication? <span class="tok-num">#f</span>)
+               (authorized-keys
+                `((<span class="tok-str">&quot;polyedre&quot;</span> ,(local-file <span class="tok-str">&quot;/home/polyedre/.ssh/id_rsa.pub&quot;</span>))))))
+     
+     <span class="tok-cm">;; Add cloud-init service</span>
+     (<span class="tok-kw">service</span> cloud-init-service-type
+              (cloud-init-configuration
+               (datasources &#x27;(<span class="tok-str">&quot;ConfigDrive&quot;</span> <span class="tok-str">&quot;OpenStack&quot;</span> <span class="tok-str">&quot;NoCloud&quot;</span>))))
+     
+     <span class="tok-cm">;; Add nginx web server</span>
+     (<span class="tok-kw">service</span> nginx-service-type
+              (nginx-configuration
+               (server-blocks
+                (<span class="tok-kw">list</span>
+                 (nginx-server-configuration
+                  (listen &#x27;(<span class="tok-str">&quot;80&quot;</span>))
+                  (server-name &#x27;(<span class="tok-str">&quot;www.polyed.re&quot;</span>))
+                  (root (file-union <span class="tok-str">&quot;nginx-root&quot;</span>
+                                   `((<span class="tok-str">&quot;index.html&quot;</span> ,(local-file <span class="tok-str">&quot;./index.html&quot;</span>))))))))))
+     
+     <span class="tok-cm">;; Add a basic firewall</span>
+     (<span class="tok-kw">service</span> iptables-service-type
+              (iptables-configuration
+               (ipv4-rules (plain-file <span class="tok-str">&quot;iptables.rules&quot;</span>
+                                      <span class="tok-str">&quot;
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp --dport 443 -j ACCEPT
+COMMIT
+&quot;</span>))
+               (ipv6-rules (plain-file <span class="tok-str">&quot;ip6tables.rules&quot;</span>
+                                      <span class="tok-str">&quot;
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p ipv6-icmp -j ACCEPT
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp --dport 443 -j ACCEPT
+COMMIT
+&quot;</span>)))))
+    
+    (modify-services %base-services
+      (guix-service-type config =&gt;
+                         (guix-configuration
+                          (inherit config)
+                          (authorized-keys (append (<span class="tok-kw">list</span> (local-file <span class="tok-str">&quot;/etc/guix/signing-key.pub&quot;</span>)) %default-authorized-guix-keys))))))))</code></pre>
+<p>This extended configuration:</p>
+<ol><li>Creates a non-root user with sudo privileges 2. Installs additional useful packages 3. Improves security by disabling root SSH login 4. Adds an Nginx web server 5. Configures a basic firewall to control inbound traffic</li></ol>
+<p>Deploy the updated configuration with <code>guix deploy deploy.scm</code>, and all these changes will be applied to your VM.</p>
+<h2>Security Hardening</h2>
+<p>Security is critical for any public-facing server. Here are some additional security measures to consider:</p>
+<h3>SSH Hardening</h3>
+<p>Update your openssh-configuration to include:</p>
+<pre><code class="lang-scheme">(openssh-configuration
+ (openssh openssh-sans-x)
+ (permit-root-login <span class="tok-num">#f</span>)
+ (password-authentication? <span class="tok-num">#f</span>)
+ (x11-forwarding? <span class="tok-num">#f</span>)
+ (allow-agent-forwarding? <span class="tok-num">#f</span>)
+ (max-auth-tries <span class="tok-num">3</span>)
+ (log-level &#x27;verbose)
+ (authorized-keys
+  `((<span class="tok-str">&quot;polyedre&quot;</span> ,(local-file <span class="tok-str">&quot;/home/polyedre/.ssh/id_rsa.pub&quot;</span>)))))</code></pre>
+<h3>Automatic Security Updates</h3>
+<p>Add a service to periodically update security-critical packages:</p>
+<pre><code class="lang-scheme">(<span class="tok-kw">service</span> unattended-upgrade-service-type
+         (unattended-upgrade-configuration
+          (schedule <span class="tok-str">&quot;0 4 * * *&quot;</span>)))  <span class="tok-cm">;; Run at 4 AM daily</span></code></pre>
+<h3>System Auditing</h3>
+<p>Enable system auditing with auditd:</p>
+<pre><code class="lang-scheme">(<span class="tok-kw">service</span> auditd-service-type)</code></pre>
+<h2>Advanced Configuration Examples</h2>
+<h3>Setting Up PostgreSQL Database</h3>
+<p>Add a PostgreSQL database server to your VM:</p>
+<pre><code class="lang-scheme">(use-service-modules databases)
+<span class="tok-cm">;; ...</span>
+
+(<span class="tok-kw">service</span> postgresql-service-type
+         (postgresql-configuration
+          (port <span class="tok-num">5432</span>)
+          (locale <span class="tok-str">&quot;en_US.utf8&quot;</span>)
+          (create-user-groups? <span class="tok-num">#t</span>)
+          (authentication
+           (<span class="tok-kw">list</span> (postgresql-authentication-rule
+                  (auth-name <span class="tok-str">&quot;local&quot;</span>)
+                  (auth-method <span class="tok-str">&quot;peer&quot;</span>)
+                  (auth-matches &#x27;(<span class="tok-str">&quot;all&quot;</span>)))))
+          (extension-packages
+           (<span class="tok-kw">list</span> postgresql-postgis))))</code></pre>
+<h3>Setting Up a Reverse Proxy with Let's Encrypt</h3>
+<p>For secure web services with automatic TLS certificate management:</p>
+<pre><code class="lang-scheme">(<span class="tok-kw">use-modules</span> (gnu <span class="tok-kw">services</span> certbot))
+<span class="tok-cm">;; ...</span>
+
+(<span class="tok-kw">service</span> nginx-service-type
+         (nginx-configuration
+          (server-blocks
+           (<span class="tok-kw">list</span>
+            (nginx-server-configuration
+             (server-name &#x27;(<span class="tok-str">&quot;www.polyed.re&quot;</span>))
+             (listen &#x27;(<span class="tok-str">&quot;443 ssl&quot;</span>))
+             (ssl-certificate <span class="tok-str">&quot;/etc/letsencrypt/live/www.polyed.re/fullchain.pem&quot;</span>)
+             (ssl-certificate-key <span class="tok-str">&quot;/etc/letsencrypt/live/www.polyed.re/privkey.pem&quot;</span>)
+             (root (file-union <span class="tok-str">&quot;nginx-root&quot;</span>
+                              `((<span class="tok-str">&quot;index.html&quot;</span> ,(local-file <span class="tok-str">&quot;./index.html&quot;</span>)))))
+             (locations
+              (<span class="tok-kw">list</span>
+               (nginx-location-configuration
+                (uri <span class="tok-str">&quot;/&quot;</span>)
+                (body &#x27;(<span class="tok-str">&quot;try_files $uri $uri/ =404;&quot;</span>)))))))
+          (server-tokens? <span class="tok-num">#f</span>)))
+
+(<span class="tok-kw">service</span> certbot-service-type
+         (certbot-configuration
+          (email <span class="tok-str">&quot;your.email@example.com&quot;</span>)
+          (webroot <span class="tok-str">&quot;/var/www/certbot&quot;</span>)
+          (certificates
+           (<span class="tok-kw">list</span>
+            (certificate-configuration
+             (domains &#x27;(<span class="tok-str">&quot;www.polyed.re&quot;</span>))
+             (deploy-hook <span class="tok-str">&quot;systemctl reload nginx&quot;</span>))))))</code></pre>
+<h2>Troubleshooting</h2>
+<h3>Common Issues and Solutions</h3>
+<h4>VM Fails to Boot in OpenStack</h4>
+<ol><li><strong>Issue</strong>: The VM shows as "Error" or "Shut Off" state in OpenStack.    <strong>Solution</strong>: Check the console log for errors:    ``<code>bash    openstack console log show guix-1    </code>``    Common problems include incorrect bootloader configuration or filesystem issues.</li><li><strong>Issue</strong>: Network connectivity fails in the VM.    <strong>Solution</strong>: Ensure the DHCP client service is enabled and the network device is correctly configured. Check if the VM is receiving DHCP offers:    ``<code>bash    # Inside the VM    ip addr    journalctl -u dhclient    </code>``</li></ol>
+<h4>SSH Connection Problems</h4>
+<ol><li><strong>Issue</strong>: Cannot connect via SSH.    <strong>Solution</strong>: Verify the security group allows port 22 and check if the SSH service is running:    ``<code>bash    # From your local machine    openstack security group rule list default    # Inside the VM (if you can access console)    systemctl status sshd    </code>``</li><li><strong>Issue</strong>: SSH key authentication fails.    <strong>Solution</strong>: Ensure the correct public key is in the authorized_keys file and permissions are correct:    ``<code>bash    # Inside the VM    ls -la ~/.ssh/    chmod 700 ~/.ssh    chmod 600 ~/.ssh/authorized_keys    </code>``</li></ol>
+<h4>Guix Deploy Errors</h4>
+<ol><li><strong>Issue</strong>: "Failed to connect to host" error during deployment.    <strong>Solution</strong>: Verify the hostname/IP and SSH configuration in your deploy.scm file.</li><li><strong>Issue</strong>: Build failures during deployment.    <strong>Solution</strong>: Try building the failing packages locally first to diagnose the issue:    ``<code>bash    guix build package-name    </code>``</li></ol>
+<h2>Comparison with Other Tools</h2>
+<h3>Guix Deploy vs. Ansible</h3>
+<table><thead><tr><th>Feature</th><th>Guix Deploy</th><th>Ansible</th></tr></thead><tbody><tr><td>Configuration Style</td><td>Declarative</td><td>Mostly procedural</td></tr><tr><td>Language</td><td>Guile Scheme</td><td>YAML + Jinja2</td></tr><tr><td>Reproducibility</td><td>Very strong</td><td>Limited</td></tr><tr><td>Rollbacks</td><td>Built-in</td><td>Manual</td></tr><tr><td>Learning Curve</td><td>Steeper (requires Scheme)</td><td>Gentler</td></tr><tr><td>Ecosystem</td><td>Smaller</td><td>Larger</td></tr></tbody></table>
+<h3>Guix Deploy vs. Terraform + Configuration Management</h3>
+<p>While Terraform excels at provisioning cloud infrastructure, Guix Deploy focuses on system configuration. They can be complementary:</p>
+<ul><li>Use Terraform to provision your OpenStack infrastructure</li><li>Use Guix Deploy to configure the operating system and services</li></ul>
+<p>The main advantage of Guix is the unified approach—the same language and principles apply from package management to system configuration to deployment.</p>
+<h2>Conclusion</h2>
+<p>Deploying and managing Guix VMs in OpenStack offers a powerful, reproducible approach to cloud infrastructure. The declarative nature of Guix provides several key benefits:</p>
+<ol><li><strong>Reproducibility</strong>: Your entire system configuration is captured in code, making environments easy to reproduce 2. <strong>Transactional upgrades and rollbacks</strong>: System changes are atomic, and you can easily roll back if something goes wrong 3. <strong>Unified approach</strong>: The same principles and tools apply from package management to system configuration to deployment 4. <strong>Programmability</strong>: Using a full programming language (Guile Scheme) for configuration offers great flexibility</li></ol>
+<p>While there is a learning curve, particularly if you're not familiar with Scheme, the benefits are substantial for those who value reproducibility and a truly declarative approach to system management.</p>
+<p>Guix may not be the most common choice for cloud deployments, but it offers a refreshing alternative to traditional tools. By combining the functional principles of Guix with the flexibility of cloud infrastructure, you can build systems that are both powerful and maintainable.</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#guix</a> <a href="../../index.html">#infra</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>
