@@ -63,7 +63,7 @@
   (<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L269">secret</a>    #:name <span class="tok-str">&quot;loulou-secret&quot;</span>
              #:data '((DB_PASSWORD . <span class="tok-str">&quot;bG91bG91LXNlY3JldA==&quot;</span>))))
 
-(checksum-config)
+(<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L522">checksum-config</a>)
 (<a href="https://github.com/polyedre/hexol/blob/c1120880c1d80cfc8ab85a8c23161d458fbf9078/hexol/k8s.scm#L744">compliance-all</a> <span class="tok-str">&quot;secure.io&quot;</span>)</code></pre>
 <p>In the example, <code>app</code> is a function returning a Deployment and a Service. In Terraform, you would have to build a new module to do this abstraction, but here, it comes nearly free.</p>
 <p>The Deployment mounts a secret at /etc/loulou/secret. I did not have to add to both the <code>volumes</code> and the <code>volumeMounts</code> sections.</p>
