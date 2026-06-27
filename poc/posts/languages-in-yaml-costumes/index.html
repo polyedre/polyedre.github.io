@@ -46,7 +46,7 @@
         {{- end }}
 {{- end }}</code></pre>
 <p>The templating takes more space than the code. Something is wrong.</p>
-<p>Another smell is that lots of Helm charts use <code>indent</code>/<code>nindent</code>. Looking back, I am quite puzzled at our choice to template... It seems to be nothing more than a quick fix. Now that I look back, I wonder how we accepted at some point to template YAML files (i.e., structured data) with a text engine.</p>
+<p>Another smell is that lots of Helm charts use <code>indent</code>/<code>nindent</code>. Looking back, I am quite puzzled at our choice to template YAML, which is structured data, with a text templating engine. It seems to be nothing more than a quick fix.</p>
 <p>Terraform also smells. If you've ever used a little bit Terraform, I'm sure you used something like <code>count = var.enabled ? 1 : 0</code> to conditionnally create a resource. I could add that Terraform's <code>merge</code> function is a shallow merge, and there's no way to do a native deep merge.</p>
 <p>All of these tools rely on some kind of Domain Specific Language. For Helm, it's the Go template engine with a minimal standard library. For Terraform, it's HCL. And I would argue that tools like Ansible, Hieradata and Kustomize implement DSL-like traits. For example, Ansible uses the keywords <code>when</code>, <code>includes</code> and <code>block</code> to reimplement control logic. These are all languages in YAML costumes!</p>
 <p>But all these DSL are intentionnally limited. The standard library they allow is fixed. And I feel constrained using them. What if we used a real programming language instead?</p>
