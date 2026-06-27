@@ -5,8 +5,15 @@
     <link>https://polyed.re/</link>
     <description>A personal techy blog. Infra, scheme, weird workflows.</description>
     <language>en</language>
-    <lastBuildDate>Sun, 07 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jun 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://polyed.re/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>YAML Is Structured Data — Search and Edit It With a Dedicated Tool</title>
+      <link>https://polyed.re/posts/search-edit-yaml-with-ym/</link>
+      <guid>https://polyed.re/posts/search-edit-yaml-with-ym/</guid>
+      <pubDate>Sat, 27 Jun 2026 00:00:00 +0000</pubDate>
+      <description>In my last article about languages in YAML costumes, I complained that Helm templatized YAML with a text templating engine. YAML is a language that serializes data structure into text. It would be better to manage directly the data structure that YAML represents.</description>
+    </item>
     <item>
       <title>Languages in YAML Costumes</title>
       <link>https://polyed.re/posts/languages-in-yaml-costumes/</link>
