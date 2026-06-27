@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YAML is Structured Data — Search and Edit It With a Dedicated Tool</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="icon" href="../../assets/hello.webp">
+</head>
+<body>
+
+<nav class="tabs">
+  <a class="host" href="../../index.html">polyedre@home</a>
+  <span class="right">
+    <span class="hue-control">
+      <span>hue</span>
+      <input id="hue-slider" type="range" min="0" max="360" value="280" aria-label="theme hue">
+      <b id="hue-value">280°</b>
+    </span>
+  </span>
+</nav>
+
+<main>
+  <article class="post">
+
+    <header class="post-head">
+      <h1>YAML Is Structured Data — Search and Edit It With a Dedicated Tool</h1>
+      <div class="meta">
+        <span><b>date</b> 2026-06-27</span>
+        <span><b>read</b> 3 min</span>
+        <span><b>tags</b> #yaml #cli #tools</span>
+      </div>
+    </header>
+
+<p>In my last article about <a href="../languages-in-yaml-costumes/index.html">languages in YAML costumes</a>, I complained that Helm templatized YAML with a text templating engine. YAML is a language that serializes <strong>data structure</strong> into text. It would be better to manipulate the data structure that YAML represents as data instead of text.</p>
+<p>Because a small part of my day job requires me to work on hieradata inventories, I frequently come across a huge number of YAML files I need to dig in. Often, I need to see if a key is defined for a specific environment, or which environments define a specific key. But because YAML uses indentation and new lines as syntax, most greps are imprecise:</p>
+<pre><code class="lang-sh">$ grep enabled test.yaml
+  enabled: true
+    enabled: true
+    enabled: false</code></pre>
+<p>Looking for the string "enabled" yields many results, and it's hard to know which are relevant. What is enabled and disabled here?</p>
+<p>For small files, viewing the whole file might be enough to grasp the needed information:</p>
+<pre><code class="lang-yaml">---
+app1:
+  enabled: true
+  feature:
+    enabled: true
+  port: 1234
+app2:
+  port: 8080
+  ingress:
+    enabled: false</code></pre>
+<p>But what if, like me, you manage hundreds of YAML files in nested file trees? Grep scales poorly for this specific use case.</p>
+
+<h2>ym: grep that understands key paths</h2>
+<p>A few weeks ago, I wrote a CLI utility called <a href="https://github.com/polyedre/ym">ym</a> (YAML Manipulator) that tackles exactly this issue:</p>
+<pre><code class="lang-sh">$ ym grep enabled test.yaml
+app1.enabled: true
+app1.feature.enabled: true
+app2.ingress.enabled: false</code></pre>
+<p>The subcommand <code>ym grep</code> returns the whole path of all the keys that matched, including the value at that path.</p>
+<p>As a disclaimer, <code>yq</code> can do this:</p>
+<pre><code class="lang-sh">$ yq '.. | select(key == "enabled") | (path | join(".")) + ": " + (. | tostring)' test.yaml
+app1.enabled: true
+app1.feature.enabled: true
+app2.ingress.enabled: false</code></pre>
+<p>The ergonomics are a bit rough, but it works.</p>
+<p><code>ym</code> has a few benefits added on top of this though:</p>
+<ol>
+<li>Like grep, it can target a directory and read YAML data from stdin.</li>
+<li>I added a few other subcommands: <code>set</code>, <code>unset</code>, <code>cp</code>, <code>mv</code>. I hope the names are self-explanatory. These may become handy in some specific situations, mostly when scripting version bumps.</li>
+<li>It does not alter comments and empty lines when editing a file. It only produces a minimal diff of the modified key. This eases the review of code changes done using the tool.</li>
+</ol>
+
+<hr>
+
+<p>I use it daily. If you have the same needs as me, feel free to have a look at <a href="https://github.com/polyedre/ym">ym</a>!</p>
+
+    <div class="post-foot">
+      <div class="tags"><a href="../../index.html">#yaml</a> <a href="../../index.html">#cli</a> <a href="../../index.html">#tools</a> </div>
+      <div><a href="../../index.html">← back home</a></div>
+    </div>
+
+  </article>
+</main>
+
+<script src="../../app.js"></script>
+</body>
+</html>
